@@ -7,4 +7,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract DCAManager is Ownable {
     constructor() {}
+
+    // Should receive tokens successfully before calling DCAOptions validation / Job Manager
+    function deposit(uint _amount) public payable {
+        // IERC20(token).transferFrom(msg.sender, address(this), _amount);
+    }
 }
