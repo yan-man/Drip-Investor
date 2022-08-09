@@ -11,5 +11,6 @@ import "hardhat/console.sol";
 // - User
 // all other core contracts, to access contract address directory
 contract JobManager {
-
+    // save DCA jobs, mapping? uint256 -> Job struct
+    //
 }
