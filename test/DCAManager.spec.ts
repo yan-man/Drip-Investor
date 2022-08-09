@@ -10,8 +10,8 @@ describe("DCAManager", function () {
   });
   describe("Deployment", function () {
     it("Should set the right unlockTime", async function () {
-      console.log(this.dCAManager);
-      // expect(await dCAManager.unlockTime()).to.equal(unlockTime);
+      // console.log(this.dCAManager);
+      expect(await this.dCAManager.owner()).to.equal(this.signers[0].address);
     });
     // it("Should set the right owner", async function () {
     //   const { lock, owner } = await loadFixture(deployOneYearLockFixture);
