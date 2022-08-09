@@ -8,6 +8,12 @@ import "hardhat/console.sol";
 // act as upkeep contract: "https://keepers.chain.link/"
 // validate logic on certain jobs - by calling Job manager?
 // execute jobs by calling aave/uniswap managers
+
+// calls:
+// - TradeManager
+
+// caller:
+// - JobManager
 contract KeepersManager {
 
 }

@@ -4,4 +4,8 @@ pragma solidity ^0.8.9;
 // Import this file to use console.log
 import "hardhat/console.sol";
 
-contract AaveManager {}
+// connect to aave, execute txs for lending
+// caller: TradeManager
+contract AaveManager {
+
+}
