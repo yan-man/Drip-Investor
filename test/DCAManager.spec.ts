@@ -20,7 +20,7 @@ describe("DCAManager", function () {
             .setContractAddress(0, this.dCAManager.address)
         ).to.be.reverted;
       });
-      it.only("Should allow owner to set children contract addresses", async function () {
+      it("Should allow owner to set children contract addresses", async function () {
         const testAddr = this.dCAManager.address; // dummy address
         await expect(
           this.dCAManager
@@ -30,6 +30,14 @@ describe("DCAManager", function () {
         expect(await this.dCAManager.s_contractsLookup(0)).to.be.equal(
           testAddr
         );
+      });
+      it("Should revert if owner tries to set children contract address as 0", async function () {
+        const testAddr = ethers.constants.AddressZero; // dummy address
+        await expect(
+          this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(0, testAddr)
+        ).to.be.reverted;
       });
       it("Should allow users to retrieve core contract addresses", async function () {});
       it("Should set other initialized defaults in storage", async function () {});

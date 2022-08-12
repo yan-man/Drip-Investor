@@ -19,6 +19,7 @@ contract DCAManager is Ownable {
     constructor() {}
 
     function setContractAddress(uint256 id_, address addr_) external onlyOwner {
+        require(addr_ != address(0), "Zero addr");
         s_contractsLookup[CoreContractId(id_)] = addr_;
     }
 
