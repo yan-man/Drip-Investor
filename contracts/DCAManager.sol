@@ -18,11 +18,16 @@ contract DCAManager is Ownable {
 
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
+    bool public s_isInitialized;
 
     // Events
     event DCAManager__ContractAddrSet(uint256 id);
 
+    // Errors
+    error CoreContractNotInitialized();
+
     // Modifiers
+
     constructor() {}
 
     // Functions: view then pure
@@ -36,12 +41,30 @@ contract DCAManager is Ownable {
     function setContractAddress(uint256 id_, address addr_) external onlyOwner {
         require(addr_ != address(0), "Zero addr");
         s_contractsLookup[CoreContractId(id_)] = addr_;
-
+        _checkContractInitializationStatus();
         emit DCAManager__ContractAddrSet(id_);
+    }
+
+    function _checkContractInitializationStatus() private {
+        uint256 count = 0;
+        for (uint256 i = 0; i < 5; i++) {
+            if (s_contractsLookup[CoreContractId(i)] != address(0)) {
+                count++;
+            }
+        }
+        if (count == 5) {
+            s_isInitialized = true;
+        }
     }
 
     // Should receive tokens successfully before calling DCAOptions validation / Job Manager
     function deposit(uint _amount) public payable {
         // IERC20(token).transferFrom(msg.sender, address(this), _amount);
+    }
+
+    function createDCAJob() external {
+        if (!s_isInitialized) {
+            revert CoreContractNotInitialized();
+        }
     }
 }

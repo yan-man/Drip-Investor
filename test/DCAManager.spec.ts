@@ -62,7 +62,10 @@ describe("DCAManager", function () {
       });
     });
     describe("Creating a DCA Job", function () {
-      it("Should revert if attempt to create a DCA job but core contract values are not set", async function () {});
+      it("Should revert if attempt to create a DCA job but core contract values are not set", async function () {
+        await expect(this.dCAManager.connect(this.signers[0]).createDCAJob()).to
+          .be.reverted;
+      });
       it("Should revert if token transfer not approved first", async function () {});
       it("Should revert if no tokens are sent/user has insufficient tokens", async function () {});
       it("Should revert if invalid tokens are sent with request", async function () {});

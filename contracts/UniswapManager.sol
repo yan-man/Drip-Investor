@@ -10,6 +10,7 @@ contract UniswapManager {
     // Type declarations
     // State variables
     // Events
+    // Errors
     // Modifiers
     // constructor
     // Functions: view then pure
