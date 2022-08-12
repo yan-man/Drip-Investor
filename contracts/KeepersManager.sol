@@ -20,4 +20,17 @@ contract KeepersManager {
         // validation logic for executing DCA Job
         // check that existing amount is enough to DCA with. Else, set job inactive
     }
+
+    // Type declarations
+    // State variables
+    // Events
+    // Modifiers
+    // constructor
+    // Functions: view then pure
+    // External functions
+    // External functions that are view
+    // External functions that are pure
+    // Public functions
+    // Internal functions
+    // Private functions
 }
