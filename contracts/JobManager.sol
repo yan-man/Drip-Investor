@@ -11,6 +11,15 @@ import "hardhat/console.sol";
 // - User
 // all other core contracts, to access contract address directory
 contract JobManager {
-    // save DCA jobs, mapping? uint256 -> Job struct
-    //
+    // save DCA jobs, mapping? job id -> Job struct
+    struct Job {
+        address owner;
+        uint256 frequency;
+        // style:
+        // address from; // token addr (always USDC)
+        // address to; // always wETH
+        // always set these by default
+    }
+
+    
 }

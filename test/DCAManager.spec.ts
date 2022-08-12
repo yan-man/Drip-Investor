@@ -13,7 +13,24 @@ describe("DCAManager", function () {
       it("Should set the right owner", async function () {
         expect(await this.dCAManager.owner()).to.equal(this.signers[0].address);
       });
-      it("Should allow owner to set children contract addresses", async function () {});
+      it("Should not allow non-owner to set children contract addresses", async function () {
+        await expect(
+          this.dCAManager
+            .connect(this.signers[2])
+            .setContractAddress(0, this.dCAManager.address)
+        ).to.be.reverted;
+      });
+      it.only("Should allow owner to set children contract addresses", async function () {
+        const testAddr = this.dCAManager.address; // dummy address
+        await expect(
+          this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(0, testAddr)
+        ).to.not.be.reverted;
+        expect(await this.dCAManager.s_contractsLookup(0)).to.be.equal(
+          testAddr
+        );
+      });
       it("Should allow users to retrieve core contract addresses", async function () {});
       it("Should set other initialized defaults in storage", async function () {});
       describe("Events", function () {

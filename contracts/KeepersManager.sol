@@ -15,6 +15,7 @@ import "hardhat/console.sol";
 // caller:
 // - JobManager
 contract KeepersManager {
+    // mapping: jobId -> CRON job logic
     function executionLogic() public {
         // validation logic for executing DCA Job
         // check that existing amount is enough to DCA with. Else, set job inactive
