@@ -39,7 +39,6 @@ describe("DCAManager", function () {
             .setContractAddress(0, testAddr)
         ).to.be.reverted;
       });
-      it("Should allow users to retrieve core contract addresses", async function () {});
       it("Should set other initialized defaults in storage", async function () {});
       describe("Events", function () {
         it("Should emit event for ownership transfer during deployment", async function () {});
