@@ -52,7 +52,13 @@ describe("DCAManager", function () {
       });
       // it("Should set other initialized defaults in storage", async function () {});
       describe("Events", function () {
-        it("Should emit event when a core contract address is updated", async function () {});
+        it("Should emit event when a core contract address is updated", async function () {
+          await expect(
+            this.dCAManager
+              .connect(this.signers[0])
+              .setContractAddress(0, this.dCAManager.address)
+          ).to.emit(this.dCAManager, "DCAManager__ContractAddrSet");
+        });
       });
     });
     describe("Creating a DCA Job", function () {
