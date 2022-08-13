@@ -42,7 +42,7 @@ describe("DCAManager", function () {
           testAddr
         );
       });
-      it.only("Should set flag to true when all child contracts are initialized", async function () {
+      it("Should set flag to true when all child contracts are initialized", async function () {
         const testAddr = this.dCAManager.address; // dummy address
         for (let i = 0; i < 5; i++) {
           await this.dCAManager
