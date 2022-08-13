@@ -42,6 +42,15 @@ describe("DCAManager", function () {
           testAddr
         );
       });
+      it.only("Should set flag to true when all child contracts are initialized", async function () {
+        const testAddr = this.dCAManager.address; // dummy address
+        for (let i = 0; i < 5; i++) {
+          await this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(i, testAddr);
+        }
+        expect(await this.dCAManager.s_isInitialized()).to.be.equal(true);
+      });
       it("Should revert if owner tries to set children contract address as 0", async function () {
         const testAddr = ethers.constants.AddressZero; // dummy address
         await expect(

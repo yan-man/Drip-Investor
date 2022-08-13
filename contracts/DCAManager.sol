@@ -41,19 +41,24 @@ contract DCAManager is Ownable {
     function setContractAddress(uint256 id_, address addr_) external onlyOwner {
         require(addr_ != address(0), "Zero addr");
         s_contractsLookup[CoreContractId(id_)] = addr_;
-        _checkContractInitializationStatus();
+        s_isInitialized = _checkContractInitializationStatus();
         emit DCAManager__ContractAddrSet(id_);
     }
 
-    function _checkContractInitializationStatus() private {
+    function _checkContractInitializationStatus()
+        private
+        returns (bool _isInitialized)
+    {
         uint256 count = 0;
         for (uint256 i = 0; i < 5; i++) {
             if (s_contractsLookup[CoreContractId(i)] != address(0)) {
                 count++;
+            } else {
+                break;
             }
         }
         if (count == 5) {
-            s_isInitialized = true;
+            _isInitialized = true;
         }
     }
 
