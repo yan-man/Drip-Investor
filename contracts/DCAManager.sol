@@ -28,6 +28,7 @@ contract DCAManager is Ownable {
     // Errors
     error DCAManager__CoreContractNotInitialized();
     error DCAManager__InsufficientFunds();
+    error DCAManager__TransferError();
 
     // Modifiers
     modifier isInitialized() {
@@ -97,6 +98,9 @@ contract DCAManager is Ownable {
             address(this),
             _amount
         );
+        if (!_result) {
+            revert DCAManager__TransferError();
+        }
         console.log(_result);
     }
 }

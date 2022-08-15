@@ -15,14 +15,15 @@ describe(`Unit tests`, async () => {
 
   describe(`DCAManager`, async () => {
     beforeEach(async function () {
-      const { lending, mockUsdc } = await this.loadFixture(
+      const { dCAManager, mockUsdc } = await this.loadFixture(
         unitDCAManagerFixture
       );
 
-      this.lending = lending;
-
+      this.dCAManager = dCAManager;
       this.mocks = {} as Mocks;
       this.mocks.mockUsdc = mockUsdc;
+
+      // console.log(this.mocks.mockUsdc.mock.balanceOf.returns(5));
     });
     DCAUnitTest();
   });

@@ -18,6 +18,7 @@ export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
   const DCAManagerFactory: ContractFactory = await ethers.getContractFactory(
     `DCAManager`
   );
+  // console.log(mockUsdc.address);
 
   const dCAManager: DCAManager = (await DCAManagerFactory.connect(
     deployer

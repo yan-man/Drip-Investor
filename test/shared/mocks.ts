@@ -15,6 +15,7 @@ export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   await erc20.mock.name.returns(`USD Coin`);
   await erc20.mock.symbol.returns(`USDC`);
   await erc20.mock.transferFrom.returns(true);
+  await erc20.mock.balanceOf.returns(0);
 
   return erc20;
 }
