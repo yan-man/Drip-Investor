@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 // Import this file to use console.log
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract DCAManager is Ownable {
     // Type declarations
@@ -19,6 +20,7 @@ contract DCAManager is Ownable {
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
     bool public s_isInitialized;
+    address public s_tokenAddr; // should be USDC addr
 
     // Events
     event DCAManager__ContractAddrSet(uint256 id);
@@ -27,8 +29,16 @@ contract DCAManager is Ownable {
     error CoreContractNotInitialized();
 
     // Modifiers
+    modifier isInitialized() {
+        if (!s_isInitialized) {
+            revert CoreContractNotInitialized();
+        }
+        _;
+    }
 
-    constructor() {}
+    constructor(address tokenAddr_) {
+        s_tokenAddr = tokenAddr_;
+    }
 
     // Functions: view then pure
     // External functions
@@ -70,9 +80,10 @@ contract DCAManager is Ownable {
         // IERC20(token).transferFrom(msg.sender, address(this), _amount);
     }
 
-    function createDCAJob() external {
-        if (!s_isInitialized) {
-            revert CoreContractNotInitialized();
-        }
+    /**
+     * @param _amount amount of token that is
+     */
+    function createDCAJob(uint256 _amount) external isInitialized {
+        IERC20(s_tokenAddr).transferFrom(msg.sender, address(this), _amount);
     }
 }

@@ -6,7 +6,7 @@ describe("DCAManager", function () {
   beforeEach(``, async function () {
     this.signers = await ethers.getSigners();
     const DCAManager = await ethers.getContractFactory("DCAManager");
-    this.dCAManager = await DCAManager.deploy();
+    this.dCAManager = await DCAManager.deploy(this.signers[10].address);
   });
   describe("Deployment", function () {
     describe("State variables/Owner privileges", function () {
