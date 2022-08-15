@@ -23,15 +23,22 @@ contract DCAManager is Ownable {
     address public s_tokenAddr; // should be USDC addr
 
     // Events
-    event DCAManager__ContractAddrSet(uint256 id);
+    event LogContractAddrSet(uint256 id);
 
     // Errors
-    error CoreContractNotInitialized();
+    error DCAManager__CoreContractNotInitialized();
+    error DCAManager__InsufficientFunds();
 
     // Modifiers
     modifier isInitialized() {
         if (!s_isInitialized) {
-            revert CoreContractNotInitialized();
+            revert DCAManager__CoreContractNotInitialized();
+        }
+        _;
+    }
+    modifier hasFunds() {
+        if (IERC20(s_tokenAddr).balanceOf(msg.sender) == 0) {
+            revert DCAManager__InsufficientFunds();
         }
         _;
     }
@@ -55,7 +62,7 @@ contract DCAManager is Ownable {
         if (_isInitialized) {
             s_isInitialized = _isInitialized;
         }
-        emit DCAManager__ContractAddrSet(id_);
+        emit LogContractAddrSet(id_);
     }
 
     function _checkContractInitializationStatus()
@@ -83,7 +90,7 @@ contract DCAManager is Ownable {
     /**
      * @param _amount amount of token that is
      */
-    function createDCAJob(uint256 _amount) external isInitialized {
+    function createDCAJob(uint256 _amount) external isInitialized hasFunds {
         // console.log("createDCAJob");
         bool _result = IERC20(s_tokenAddr).transferFrom(
             msg.sender,

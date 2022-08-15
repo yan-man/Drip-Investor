@@ -66,7 +66,7 @@ describe("DCAManager", function () {
             this.dCAManager
               .connect(this.signers[0])
               .setContractAddress(0, this.dCAManager.address)
-          ).to.emit(this.dCAManager, "DCAManager__ContractAddrSet");
+          ).to.emit(this.dCAManager, "LogContractAddrSet");
         });
       });
     });
@@ -87,12 +87,17 @@ describe("DCAManager", function () {
             }
           }
         );
-        it("Should revert if token transfer not approved first", async function () {
+        it("Should revert if no tokens are sent/user has insufficient tokens", async function () {
           await expect(
             this.dCAManager.connect(this.signers[0]).createDCAJob(100)
           ).to.be.reverted;
         });
-        // it("Should revert if no tokens are sent/user has insufficient tokens", async function () {});
+        it("Should revert if user has funds but token transfer not approved first", async function () {
+          await expect(
+            this.dCAManager.connect(this.signers[0]).createDCAJob(100)
+          ).to.be.reverted;
+        });
+
         // it("Should revert if invalid tokens are sent with request", async function () {});
         // it("Should call JobManager createDCAJob function if validation successful", async function () {});
         // describe("Events", function () {
