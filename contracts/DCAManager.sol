@@ -5,6 +5,7 @@ pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./libraries/DCAOptions.sol";
 
 contract DCAManager is Ownable {
     // Type declarations
@@ -92,7 +93,6 @@ contract DCAManager is Ownable {
      * @param _amount amount of token that is
      */
     function createDCAJob(uint256 _amount) external isInitialized hasFunds {
-        // console.log("createDCAJob");
         bool _result = IERC20(s_tokenAddr).transferFrom(
             msg.sender,
             address(this),
@@ -101,6 +101,9 @@ contract DCAManager is Ownable {
         if (!_result) {
             revert DCAManager__TransferError();
         }
+        // deposit for given user
         console.log(_result);
+
+        // DCAOptions(s_contractsLookup[CoreContractId.DCA_OPTIONS]).testme();
     }
 }

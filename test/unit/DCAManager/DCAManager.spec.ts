@@ -104,7 +104,6 @@ export const DCAUnitTest = (): void => {
             `DCAManager__TransferError`
           );
         });
-
         // it("Should revert if invalid tokens are sent with request", async function () {});
         // it("Should call JobManager createDCAJob function if validation successful", async function () {});
         // describe("Events", function () {

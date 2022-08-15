@@ -11,4 +11,16 @@ library DCAOptions {
     // frequency of DCA (monthly, secondly)
     // amount for DCA (% or raw vals)
     // for V1, only allow raw vals
+
+    enum frequencyUnits {
+        SECONDS,
+        HOURS,
+        DAYS,
+        WEEKS,
+        MONTHS
+    }
+
+    function testme() external {
+        console.log("testme");
+    }
 }
