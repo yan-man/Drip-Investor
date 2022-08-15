@@ -84,6 +84,12 @@ contract DCAManager is Ownable {
      * @param _amount amount of token that is
      */
     function createDCAJob(uint256 _amount) external isInitialized {
-        IERC20(s_tokenAddr).transferFrom(msg.sender, address(this), _amount);
+        // console.log("createDCAJob");
+        bool _result = IERC20(s_tokenAddr).transferFrom(
+            msg.sender,
+            address(this),
+            _amount
+        );
+        console.log(_result);
     }
 }

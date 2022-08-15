@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 describe("DCAManager", function () {
-  beforeEach(``, async function () {
+  beforeEach(`deploy DCAManager`, async function () {
     this.signers = await ethers.getSigners();
     const DCAManager = await ethers.getContractFactory("DCAManager");
     this.dCAManager = await DCAManager.deploy(this.signers[10].address);
@@ -72,18 +72,35 @@ describe("DCAManager", function () {
     });
     describe("Creating a DCA Job", function () {
       it("Should revert if attempt to create a DCA job but core contract values are not set", async function () {
-        await expect(this.dCAManager.connect(this.signers[0]).createDCAJob()).to
-          .be.reverted;
+        await expect(this.dCAManager.connect(this.signers[0]).createDCAJob(100))
+          .to.be.reverted;
       });
-      it("Should revert if token transfer not approved first", async function () {});
-      it("Should revert if no tokens are sent/user has insufficient tokens", async function () {});
-      it("Should revert if invalid tokens are sent with request", async function () {});
-      it("Should call JobManager createDCAJob function if validation successful", async function () {});
-      describe("Events", function () {
-        it("Should emit event when valid DCA job is created", async function () {});
-      });
-      describe("...after DCA job1 saved", function () {
-        it("Should have expected tokens in contract after DCA job created", async function () {});
+      describe("...after all core contracts initialized", function () {
+        beforeEach(
+          `Initialize all core contracts with dummy vars`,
+          async function () {
+            const testAddr = this.dCAManager.address; // dummy address
+            for (let i = 0; i < 5; i++) {
+              await this.dCAManager
+                .connect(this.signers[0])
+                .setContractAddress(i, testAddr);
+            }
+          }
+        );
+        it("Should revert if token transfer not approved first", async function () {
+          await expect(
+            this.dCAManager.connect(this.signers[0]).createDCAJob(100)
+          ).to.be.reverted;
+        });
+        // it("Should revert if no tokens are sent/user has insufficient tokens", async function () {});
+        // it("Should revert if invalid tokens are sent with request", async function () {});
+        // it("Should call JobManager createDCAJob function if validation successful", async function () {});
+        // describe("Events", function () {
+        //   it("Should emit event when valid DCA job is created", async function () {});
+        // });
+        // describe("...after DCA job1 saved", function () {
+        //   it("Should have expected tokens in contract after DCA job created", async function () {});
+        // });
       });
     });
   });
