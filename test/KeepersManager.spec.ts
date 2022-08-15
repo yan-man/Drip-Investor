@@ -5,12 +5,12 @@ import { ethers } from "hardhat";
 describe("Keepers Manager", function () {
   beforeEach(``, async function () {
     this.signers = await ethers.getSigners();
-    const DCAManager = await ethers.getContractFactory("DCAManager");
-    this.dCAManager = await DCAManager.deploy();
+    // const DCAManager = await ethers.getContractFactory("DCAManager");
+    // this.dCAManager = await DCAManager.deploy();
   });
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      expect(await this.dCAManager.owner()).to.equal(this.signers[0].address);
+      // expect(await this.dCAManager.owner()).to.equal(this.signers[0].address);
     });
     it("Should set the right owner", async function () {});
     it("Should set the right owner", async function () {});
