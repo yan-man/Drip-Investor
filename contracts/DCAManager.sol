@@ -91,8 +91,13 @@ contract DCAManager is Ownable {
 
     /**
      * @param _amount amount of token that is
+     * @param _options options flag array. See DCAOptions library
      */
-    function createDCAJob(uint256 _amount) external isInitialized hasFunds {
+    function createDCAJob(uint256 _amount, uint256[] calldata _options)
+        external
+        isInitialized
+        hasFunds
+    {
         bool _result = IERC20(s_tokenAddr).transferFrom(
             msg.sender,
             address(this),
@@ -101,9 +106,7 @@ contract DCAManager is Ownable {
         if (!_result) {
             revert DCAManager__TransferError();
         }
-        // deposit for given user
-        console.log(_result);
-
+        // save into user's state deposit
         DCAOptions.helptest();
     }
 }

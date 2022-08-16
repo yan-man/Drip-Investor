@@ -99,7 +99,7 @@ export const DCAUnitTest = (): void => {
           await this.mocks.mockUsdc.mock.transferFrom.returns(true);
           await this.mocks.mockUsdc.mock.balanceOf.returns(0);
           await expect(
-            this.dCAManager.connect(this.signers[0]).createDCAJob(100)
+            this.dCAManager.connect(this.signers[0]).createDCAJob(100, [1, 2])
           ).to.be.revertedWithCustomError(
             this.dCAManager,
             `DCAManager__InsufficientFunds`
@@ -109,7 +109,7 @@ export const DCAUnitTest = (): void => {
           await this.mocks.mockUsdc.mock.balanceOf.returns(1);
           await this.mocks.mockUsdc.mock.transferFrom.returns(false);
           await expect(
-            this.dCAManager.connect(this.signers[0]).createDCAJob(100)
+            this.dCAManager.connect(this.signers[0]).createDCAJob(100, [1, 2])
           ).to.be.revertedWithCustomError(
             this.dCAManager,
             `DCAManager__TransferError`
