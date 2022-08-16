@@ -15,13 +15,14 @@ describe(`Unit tests`, async () => {
 
   describe(`DCAManager`, async () => {
     beforeEach(async function () {
-      const { dCAManager, mockUsdc } = await this.loadFixture(
+      const { dCAManager, mockUsdc, mockJobManager } = await this.loadFixture(
         unitDCAManagerFixture
       );
 
       this.dCAManager = dCAManager;
       this.mocks = {} as Mocks;
       this.mocks.mockUsdc = mockUsdc;
+      this.mocks.mockJobManager = mockJobManager;
 
       // console.log(this.mocks.mockUsdc.mock.balanceOf.returns(5));
     });

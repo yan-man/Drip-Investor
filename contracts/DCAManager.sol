@@ -5,7 +5,8 @@ pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./libraries/DCAOptions.sol";
+
+// import "./libraries/DCAOptions.sol";
 
 contract DCAManager is Ownable {
     // Type declarations
@@ -107,6 +108,6 @@ contract DCAManager is Ownable {
             revert DCAManager__TransferError();
         }
         // save into user's state deposit
-        DCAOptions.helptest();
+        // DCAOptions.helptest();
     }
 }

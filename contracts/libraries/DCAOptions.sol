@@ -12,12 +12,8 @@ library DCAOptions {
     // amount for DCA (% or raw vals)
     // for V1, only allow raw vals
 
-    enum frequencyUnits {
-        SECONDS,
-        HOURS,
-        DAYS,
-        WEEKS,
-        MONTHS
+    enum frequency {
+        HOURS // SECONDS, DAYS, WEEKS, MONTHS, MINUTES
     }
 
     function helptest() public view {
