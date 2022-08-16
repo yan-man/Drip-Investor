@@ -3,7 +3,6 @@ import { Signer } from "ethers";
 import { waffle } from "hardhat";
 // import { Artifact } from "hardhat/types";
 import ERC_20_ABI from "../../abis/erc20.abi.json";
-
 export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   //   const erc20Artifact: Artifact = await artifacts.readArtifact("ERC20");
   const erc20: MockContract = await waffle.deployMockContract(

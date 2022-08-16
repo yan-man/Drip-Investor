@@ -15,8 +15,15 @@ export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
   const deployer: Wallet = signers[0];
 
   const mockUsdc = await deployMockUsdc(deployer);
+  const DCAOptions: ContractFactory = await ethers.getContractFactory(
+    `DCAOptions`
+  );
+  const dCAOptions = await DCAOptions.deploy();
+
+  // console.log(dCAOptions);
   const DCAManagerFactory: ContractFactory = await ethers.getContractFactory(
-    `DCAManager`
+    `DCAManager`,
+    { libraries: { DCAOptions: dCAOptions.address } }
   );
   // console.log(mockUsdc.address);
 

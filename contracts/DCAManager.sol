@@ -10,12 +10,11 @@ import "./libraries/DCAOptions.sol";
 contract DCAManager is Ownable {
     // Type declarations
     enum CoreContractId {
-        DCA_OPTIONS, // 0
-        JOB_MANAGER, // 1
-        KEEPERS_MANAGER, // 2
-        TRADE_MANAGER, // 3
-        UNISWAP_MANAGER, // 4
-        AAVE_MANAGER // 5
+        JOB_MANAGER, // 0
+        KEEPERS_MANAGER, // 1
+        TRADE_MANAGER, // 2
+        UNISWAP_MANAGER, // 3
+        AAVE_MANAGER // 4
     }
 
     // State variables
@@ -71,15 +70,16 @@ contract DCAManager is Ownable {
         private
         returns (bool _isInitialized)
     {
-        uint256 count = 0;
-        for (uint256 i = 0; i < 5; i++) {
+        uint256 _numContracts = uint(CoreContractId.AAVE_MANAGER);
+        uint256 _count = 0;
+        for (uint256 i = 0; i < _numContracts; i++) {
             if (s_contractsLookup[CoreContractId(i)] != address(0)) {
-                count++;
+                _count++;
             } else {
                 break;
             }
         }
-        if (count == 5) {
+        if (_count == _numContracts) {
             _isInitialized = true;
         }
     }
@@ -104,6 +104,6 @@ contract DCAManager is Ownable {
         // deposit for given user
         console.log(_result);
 
-        // DCAOptions(s_contractsLookup[CoreContractId.DCA_OPTIONS]).testme();
+        DCAOptions.helptest();
     }
 }

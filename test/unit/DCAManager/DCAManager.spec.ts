@@ -39,9 +39,20 @@ export const DCAUnitTest = (): void => {
           testAddr
         );
       });
+      it("Should allow owner to set children contract addresses", async function () {
+        const testAddr = this.dCAManager.address; // dummy address
+        await expect(
+          this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(4, testAddr)
+        ).to.not.be.reverted;
+        expect(await this.dCAManager.s_contractsLookup(4)).to.be.equal(
+          testAddr
+        );
+      });
       it("Should set flag to true when all child contracts are initialized", async function () {
         const testAddr = this.dCAManager.address; // dummy address
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
           await this.dCAManager
             .connect(this.signers[0])
             .setContractAddress(i, testAddr);
@@ -105,7 +116,11 @@ export const DCAUnitTest = (): void => {
           );
         });
         // it("Should revert if invalid tokens are sent with request", async function () {});
-        // it("Should call JobManager createDCAJob function if validation successful", async function () {});
+        // it.only("Should call JobManager createDCAJob function if validation successful", async function () {
+        //   await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
+        //   await this.mocks.mockUsdc.mock.transferFrom.returns(true);
+        //   await this.dCAManager.connect(this.signers[0]).createDCAJob(100);
+        // });
         // describe("Events", function () {
         //   it("Should emit event when valid DCA job is created", async function () {});
         // });

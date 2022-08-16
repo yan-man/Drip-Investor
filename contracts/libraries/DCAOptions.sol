@@ -20,7 +20,7 @@ library DCAOptions {
         MONTHS
     }
 
-    function testme() external {
+    function helptest() public view {
         console.log("testme");
     }
 }
