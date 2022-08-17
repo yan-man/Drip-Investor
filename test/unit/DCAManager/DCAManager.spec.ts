@@ -116,11 +116,22 @@ export const DCAUnitTest = (): void => {
           );
         });
         // it("Should revert if invalid tokens are sent with request", async function () {});
-        // it.only("Should call JobManager createDCAJob function if validation successful", async function () {
-        //   await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
-        //   await this.mocks.mockUsdc.mock.transferFrom.returns(true);
-        //   await this.dCAManager.connect(this.signers[0]).createDCAJob(100);
-        // });
+        it.only("Should call JobManager createDCAJob function if validation successful", async function () {
+          await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
+          await this.mocks.mockUsdc.mock.transferFrom.returns(true);
+
+          await this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(0, this.mocks.mockJobManager.address);
+
+          const tx = await this.dCAManager
+            .connect(this.signers[0])
+            .createDCAJob(100, [1, 2]);
+          await tx.wait();
+          // console.log(
+
+          // );
+        });
         // describe("Events", function () {
         //   it("Should emit event when valid DCA job is created", async function () {});
         // });

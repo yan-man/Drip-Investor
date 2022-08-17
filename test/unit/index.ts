@@ -24,7 +24,7 @@ describe(`Unit tests`, async () => {
       this.mocks.mockUsdc = mockUsdc;
       this.mocks.mockJobManager = mockJobManager;
 
-      // console.log(this.mocks.mockUsdc.mock.balanceOf.returns(5));
+      // console.log(this.mocks.mockJobManager);
     });
     DCAUnitTest();
   });

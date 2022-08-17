@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // import "./libraries/DCAOptions.sol";
+import "./JobManager.sol";
 
 contract DCAManager is Ownable {
     // Type declarations
@@ -20,6 +21,7 @@ contract DCAManager is Ownable {
 
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
+    JobManager private _s_jm;
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
 
@@ -60,6 +62,9 @@ contract DCAManager is Ownable {
     function setContractAddress(uint256 id_, address addr_) external onlyOwner {
         require(addr_ != address(0), "Zero addr");
         s_contractsLookup[CoreContractId(id_)] = addr_;
+        if (id_ == uint(CoreContractId.JOB_MANAGER)) {
+            _s_jm = JobManager(addr_);
+        }
         bool _isInitialized = _checkContractInitializationStatus();
         if (_isInitialized) {
             s_isInitialized = _isInitialized;
@@ -109,5 +114,9 @@ contract DCAManager is Ownable {
         }
         // save into user's state deposit
         // DCAOptions.helptest();
+        console.log(_s_jm.create());
+        // uint256 _jobId = _jm.create();
+        // console.log(_jobId);
+        // console.log(s_contractsLookup[CoreContractId.JOB_MANAGER]);
     }
 }
