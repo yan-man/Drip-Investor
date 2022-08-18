@@ -154,10 +154,10 @@ contract DCAManager is Ownable {
             revert DCAManager__JobManager__Cancel();
         }
         s_userJobs[msg.sender][jobId_] = 0;
-        // bool _result = IERC20(s_tokenAddr).transferFrom(
-        //     msg.sender,
-        //     address(this),
-        //     amount_
-        // );
+        _result = IERC20(s_tokenAddr).transferFrom(
+            address(this),
+            msg.sender,
+            _amount
+        );
     }
 }

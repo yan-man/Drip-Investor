@@ -191,11 +191,11 @@ export const DCAUnitTest = (): void => {
             ).to.be.equal(this._depositAmount + _depositAmount);
           });
           it("Should allow cancellation from user", async function () {
-            console.log(
+            expect(
               await this.dCAManager
                 .connect(this.signers[1])
                 .s_userJobs(this.signers[1].address, this._mockJobId)
-            );
+            ).to.be.equal(this._depositAmount);
 
             await this.mocks.mockJobManager.mock.isValidId.returns(true);
             await this.mocks.mockJobManager.mock.cancel.returns(true);
@@ -205,11 +205,11 @@ export const DCAUnitTest = (): void => {
                 .cancelJob(this._mockJobId)
             ).to.not.be.reverted;
 
-            console.log(
+            expect(
               await this.dCAManager
                 .connect(this.signers[1])
                 .s_userJobs(this.signers[1].address, this._mockJobId)
-            );
+            ).to.be.equal(0);
           });
           it("Should throw if cancellation attempted for invalid id", async function () {
             await this.mocks.mockJobManager.mock.isValidId.returns(false);
