@@ -15,8 +15,12 @@ export const UnitTest = (): void => {
     });
 
     describe("Events", function () {
-      it.only("Should emit event during create", async function () {
-        this.jobManager.connect(this.sig);
+      it("Should emit event during create", async function () {
+        await expect(
+          this.jobManager
+            .connect(this.signers[0])
+            .create(this.signers[2].address, 1000, [0])
+        ).to.emit(this.jobManager, `LogCreate`);
       });
     });
   });

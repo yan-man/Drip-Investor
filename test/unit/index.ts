@@ -35,13 +35,10 @@ describe(`Unit tests`, async () => {
 
   describe(`JobManager`, async () => {
     beforeEach(async function () {
-      const { jobManager, mockUsdc, mockJobManager } = await this.loadFixture(
-        unitJobManagerFixture
-      );
+      const { jobManager } = await this.loadFixture(unitJobManagerFixture);
 
-      this.dCAManager = jobManager;
+      this.jobManager = jobManager;
       this.mocks = {} as Mocks;
-      this.mocks.mockUsdc = mockUsdc;
 
       // console.log(this.mocks.mockJobManager);
     });

@@ -35,7 +35,13 @@ contract JobManager {
     Counters.Counter private _jobIds; // 0-indexed
 
     // Events
+    event LogCreate(address owner_, uint256 amount_, uint256[] options_);
+
+    // Errors
+    error JobManager__InvalidOwner();
+
     // Modifiers
+
     // constructor
 
     // Functions: view then pure
@@ -49,10 +55,14 @@ contract JobManager {
     // external, only called by DCAManager
     // should save a new job and show active or not
     // return newly saved id
-    function create(address owner_, uint256[] calldata options_)
-        external
-        returns (uint256 _jobId)
-    {
+    function create(
+        address owner_,
+        uint256 amount_,
+        uint256[] calldata options_
+    ) external returns (uint256 _jobId) {
+        if (owner_ == address(0)) {
+            revert JobManager__InvalidOwner();
+        }
         _jobId = _jobIds.current();
         s_jobs[_jobId] = Job({
             id: _jobId,
@@ -60,9 +70,11 @@ contract JobManager {
             frequencyOptionId: options_[0],
             startTime: block.timestamp,
             isActive: true,
-            amount: 0
+            amount: amount_
         });
         _jobIds.increment();
+
+        emit LogCreate(owner_, amount_, options_);
     }
 
     function isValidId(uint256 id_) public view returns (bool _result) {

@@ -133,7 +133,7 @@ contract DCAManager is Ownable {
         // add user token amount to existing deposit
         uint256 _deposit = s_deposits[msg.sender];
         s_deposits[msg.sender] = _deposit + amount_;
-        uint256 _jobId = _s_jm.create(msg.sender, options_); // create DCA job
+        uint256 _jobId = _s_jm.create(msg.sender, amount_, options_); // create DCA job
         s_userJobs[msg.sender][_jobId] = amount_;
 
         emit LogCreateJob(msg.sender, amount_);
