@@ -51,8 +51,8 @@ contract DCAManager is Ownable {
         }
         _;
     }
-    modifier hasFunds() {
-        if (IERC20(s_tokenAddr).balanceOf(msg.sender) == 0) {
+    modifier hasFunds(uint256 amount_) {
+        if (IERC20(s_tokenAddr).balanceOf(msg.sender) < amount_) {
             revert DCAManager__InsufficientFunds();
         }
         _;
@@ -121,7 +121,7 @@ contract DCAManager is Ownable {
         uint256 amount_,
         uint256 investmentAmount_,
         uint256[] calldata options_
-    ) external isInitialized hasFunds {
+    ) external isInitialized hasFunds(amount_) {
         bool _result = IERC20(s_tokenAddr).transferFrom(
             msg.sender,
             address(this),

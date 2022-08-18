@@ -109,7 +109,7 @@ export const UnitTest = (): void => {
         );
       });
       it("Should revert if user has funds but token transfer not approved first", async function () {
-        await this.mocks.mockUsdc.mock.balanceOf.returns(1);
+        await this.mocks.mockUsdc.mock.balanceOf.returns(100);
         await this.mocks.mockUsdc.mock.transferFrom.returns(false);
         await expect(
           this.dCAManager.connect(this.signers[0]).createDCAJob(100, 10, [1, 2])
@@ -118,12 +118,23 @@ export const UnitTest = (): void => {
           `DCAManager__TransferError`
         );
       });
+      it("Should revert if user has insufficient funds", async function () {
+        await this.mocks.mockUsdc.mock.balanceOf.returns(1);
+        await this.mocks.mockUsdc.mock.transferFrom.returns(false);
+        await expect(
+          this.dCAManager.connect(this.signers[0]).createDCAJob(100, 10, [1, 2])
+        ).to.be.revertedWithCustomError(
+          this.dCAManager,
+          `DCAManager__InsufficientFunds`
+        );
+      });
       // it("Should revert if invalid tokens are sent with request", async function () {});
       it("Should create DCA job if validation successful", async function () {
         const _mockJobId = 2;
+        const _depositAmount = 100;
 
         // set up mocks
-        await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
+        await this.mocks.mockUsdc.mock.balanceOf.returns(_depositAmount);
         await this.mocks.mockUsdc.mock.transferFrom.returns(true);
         await this.mocks.mockJobManager.mock.create.returns(_mockJobId);
 
@@ -133,7 +144,6 @@ export const UnitTest = (): void => {
           .setContractAddress(0, this.mocks.mockJobManager.address);
 
         // create DCA job
-        const _depositAmount = 100;
         const tx = await this.dCAManager
           .connect(this.signers[0])
           .createDCAJob(_depositAmount, _depositAmount / 10, [0, 0]);
@@ -237,7 +247,7 @@ export const UnitTest = (): void => {
               .withArgs(this._mockJobId);
           });
         });
-        // it("", async function () {});
+
         // it("", async function () {});
       });
       describe("Events", function () {
