@@ -12,7 +12,16 @@ export const UnitTest = (): void => {
           .create(this.signers[2].address, 1000, 100, [])
       ).to.be.reverted;
     });
-    it("Should revert if owner is zero address", async function () {});
+    it("Should revert if owner is zero address", async function () {
+      await expect(
+        this.jobManager
+          .connect(this.signers[0])
+          .create(ethers.constants.AddressZero, 1000, 100, [])
+      ).to.be.revertedWithCustomError(
+        this.jobManager,
+        `JobManager__InvalidOwner`
+      );
+    });
     it("Should create job if validation successful", async function () {});
     describe("...after job1 created", function () {
       beforeEach(`...create job1`, async function () {});
