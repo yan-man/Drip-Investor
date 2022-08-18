@@ -147,9 +147,7 @@ contract DCAManager is Ownable {
             revert DCAManager__InvalidJobCreator(msg.sender);
         }
         uint256 _amount = s_userJobs[msg.sender][jobId_];
-        // cancels DCA job, returns funds to user
         _result = _s_jm.cancel(jobId_);
-        // now return funds
         if (!_result) {
             revert DCAManager__JobManager__Cancel();
         }

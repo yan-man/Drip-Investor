@@ -190,7 +190,7 @@ export const DCAUnitTest = (): void => {
               await this.dCAManager.s_deposits(this.signers[1].address)
             ).to.be.equal(this._depositAmount + _depositAmount);
           });
-          it("Should allow cancellation from user", async function () {
+          it("Should cancel job", async function () {
             expect(
               await this.dCAManager
                 .connect(this.signers[1])
@@ -199,6 +199,7 @@ export const DCAUnitTest = (): void => {
 
             await this.mocks.mockJobManager.mock.isValidId.returns(true);
             await this.mocks.mockJobManager.mock.cancel.returns(true);
+
             await expect(
               this.dCAManager
                 .connect(this.signers[1])
