@@ -18,15 +18,15 @@ contract DCAManager is Ownable {
         UNISWAP_MANAGER, // 3
         AAVE_MANAGER // 4
     }
-    struct UserJobs {
-        // uint256[] jobIds;
-        mapping(uint256 => bool) job; // job id => exists?
-    }
+    // struct UserJobs {
+    //     // uint256[] jobIds;
+    //     mapping(uint256 => bool) job; // job id => exists?
+    // }
 
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
     mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
-    mapping(address => UserJobs) internal s_userJobs; // user address -> num tokens deposited
+    mapping(address => mapping(uint256 => uint256)) internal s_userJobs; // user address -> (job id -> num tokens deposited)
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
     JobManager private _s_jm;
@@ -132,17 +132,17 @@ contract DCAManager is Ownable {
         uint256 _deposit = s_deposits[msg.sender];
         s_deposits[msg.sender] = _deposit + amount_;
         uint256 _jobId = _s_jm.create(msg.sender, options_); // create DCA job
-        s_userJobs[msg.sender].job[_jobId] = true;
+        s_userJobs[msg.sender][_jobId] = amount_;
 
         emit LogCreateJob(msg.sender, amount_);
     }
 
-    function getUserJobIds(address addr_, uint256 id_)
+    function getUserJobs(address addr_, uint256 id_)
         external
         view
-        returns (bool)
+        returns (uint256)
     {
-        return s_userJobs[addr_].job[id_];
+        return s_userJobs[addr_][id_];
     }
 
     function cancelJob(uint256 jobId_)
@@ -150,11 +150,12 @@ contract DCAManager is Ownable {
         isValidJobId(jobId_)
         returns (bool)
     {
-        if (!s_userJobs[msg.sender].job[jobId_]) {
+        if (s_userJobs[msg.sender][jobId_] == 0) {
             revert DCAManager__InvalidJobCreator(msg.sender);
         }
         // cancels DCA job, returns funds to user
         // _s_jm.cancel();
+        return true;
     }
 
     // function cancelAllJobs() returns (boolean)

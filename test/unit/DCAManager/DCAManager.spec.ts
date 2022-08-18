@@ -142,12 +142,11 @@ export const DCAUnitTest = (): void => {
               .connect(this.signers[0])
               .s_deposits(this.signers[0].address)
           ).to.be.equal(_depositAmount);
-
           expect(
             await this.dCAManager
               .connect(this.signers[0])
-              .getUserJobIds(this.signers[0].address, _mockJobId)
-          ).to.be.equal(true);
+              .getUserJobs(this.signers[0].address, _mockJobId)
+          ).to.be.equal(_depositAmount);
         });
 
         describe("...After 1st DCA job created from user1", function () {
@@ -175,15 +174,20 @@ export const DCAUnitTest = (): void => {
           });
           it("Should add to existing deposit amount if 2nd job created", async function () {
             const _depositAmount = 200;
+            const _mockJobId = 3;
+            await this.mocks.mockJobManager.mock.create.returns(_mockJobId);
             const tx = await this.dCAManager
               .connect(this.signers[1])
               .createDCAJob(_depositAmount, [0, 0]);
             await tx.wait();
-
             expect(
-              await this.dCAManager
-                .connect(this.signers[1])
-                .s_deposits(this.signers[1].address)
+              await this.dCAManager.getUserJobs(
+                this.signers[1].address,
+                _mockJobId
+              )
+            ).to.be.equal(_depositAmount);
+            expect(
+              await this.dCAManager.s_deposits(this.signers[1].address)
             ).to.be.equal(this._depositAmount + _depositAmount);
           });
           it("Should allow cancellation from user", async function () {
