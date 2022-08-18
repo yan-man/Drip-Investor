@@ -197,7 +197,7 @@ export const DCAUnitTest = (): void => {
             await this.mocks.mockJobManager.mock.isValidId.returns(false);
             await expect(this.dCAManager.cancelJob(0)).to.be.reverted;
           });
-          it.only("Should throw if cancellation attempted by non owner", async function () {
+          it("Should throw if cancellation attempted by non owner", async function () {
             await this.mocks.mockJobManager.mock.isValidId.returns(true);
             await expect(this.dCAManager.cancelJob(0)).to.be.reverted;
           });
