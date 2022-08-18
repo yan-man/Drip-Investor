@@ -1,0 +1,66 @@
+version: 2.1
+orbs:
+  node: circleci/node@5.0.2
+  codecov: codecov/codecov@3.2.3
+commands:
+  fetch:
+    steps:
+      - checkout
+      - run:
+          name: Code Has Arrived
+          command: |
+            ls -al
+  build:
+    steps:
+      - checkout
+      - node/install:
+          install-yarn: false
+          node-version: "16.14.2"
+      - run: node --version
+  test-contracts:
+    steps:
+      - run: npm i
+      - run: npx hardhat compile && npx hardhat coverage
+      - run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t 2aa684ca-9d0b-4c76-89be-8d5f54c3e508
+  test-frontend:
+    steps:
+      - run: cd ./frontend/ && npm i
+      - run: cd ./frontend/ && npm test -- --watchAll=false --coverage
+      - run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t 2aa684ca-9d0b-4c76-89be-8d5f54c3e508
+executors:
+  docker-executor:
+    docker:
+      - image: "cimg/base:stable"
+jobs:
+  Hello-World:
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - run:
+          name: Saying Hello
+          command: |
+            echo 'Hello World!'
+            echo 'This is the delivery pipeline'
+  fetch-code:
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - fetch
+  install-node-and-test:
+    executor: docker-executor
+    steps:
+      - build
+      - test-contracts
+workflows:
+  test-app:
+    jobs:
+      - fetch-code
+      - install-node-and-test:
+          requires:
+            - fetch-code
