@@ -71,7 +71,9 @@ contract JobManager {
         }
     }
 
-    // function cancel (uint256 id)
+    function cancel(uint256 id) external returns (bool _result) {
+        return true;
+    }
     // erases Job of given jobId - set inactive
     // return true if so
 
