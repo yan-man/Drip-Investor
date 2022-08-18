@@ -10,13 +10,16 @@ export const UnitTest = (): void => {
         this.jobManager
           .connect(this.signers[0])
           .create(this.signers[2].address, 1000, 100, [])
-      ).to.be.reverted;
+      ).to.be.revertedWithCustomError(
+        this.jobManager,
+        `DCAOptions__InvalidOptions`
+      );
     });
     it("Should revert if owner is zero address", async function () {
       await expect(
         this.jobManager
           .connect(this.signers[0])
-          .create(ethers.constants.AddressZero, 1000, 100, [])
+          .create(ethers.constants.AddressZero, 1000, 100, [0])
       ).to.be.revertedWithCustomError(
         this.jobManager,
         `JobManager__InvalidOwner`
