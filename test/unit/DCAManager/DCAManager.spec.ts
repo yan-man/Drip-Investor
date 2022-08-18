@@ -116,7 +116,7 @@ export const DCAUnitTest = (): void => {
           );
         });
         // it("Should revert if invalid tokens are sent with request", async function () {});
-        it.only("Should create DCA job if validation successful", async function () {
+        it("Should create DCA job if validation successful", async function () {
           const _mockJobId = 2;
 
           // set up mocks
