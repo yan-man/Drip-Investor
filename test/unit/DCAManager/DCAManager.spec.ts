@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 
 import { Mocks, Signers } from "../../shared/types";
 
-export const DCAUnitTest = (): void => {
+export const UnitTest = (): void => {
   describe("Deployment", function () {
     describe("State variables/Owner privileges", function () {
       it("Should set the right owner", async function () {
