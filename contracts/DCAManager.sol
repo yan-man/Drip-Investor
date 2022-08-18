@@ -26,7 +26,7 @@ contract DCAManager is Ownable {
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
     mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
-    mapping(address => mapping(uint256 => uint256)) internal s_userJobs; // user address -> (job id -> num tokens deposited)
+    mapping(address => mapping(uint256 => uint256)) public s_userJobs; // user address -> (job id -> num tokens deposited)
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
     JobManager private _s_jm;
@@ -41,6 +41,7 @@ contract DCAManager is Ownable {
     error DCAManager__TransferError();
     error DCAManager__InvalidJobId(uint256 jobId);
     error DCAManager__InvalidJobCreator(address addr);
+    error DCAManager__JobManager__Cancel();
 
     // Modifiers
     modifier isInitialized() {
@@ -137,26 +138,26 @@ contract DCAManager is Ownable {
         emit LogCreateJob(msg.sender, amount_);
     }
 
-    function getUserJobs(address addr_, uint256 id_)
-        external
-        view
-        returns (uint256)
-    {
-        return s_userJobs[addr_][id_];
-    }
-
     function cancelJob(uint256 jobId_)
         external
         isValidJobId(jobId_)
-        returns (bool)
+        returns (bool _result)
     {
         if (s_userJobs[msg.sender][jobId_] == 0) {
             revert DCAManager__InvalidJobCreator(msg.sender);
         }
+        uint256 _amount = s_userJobs[msg.sender][jobId_];
         // cancels DCA job, returns funds to user
-        // _s_jm.cancel();
-        return true;
+        _result = _s_jm.cancel(jobId_);
+        // now return funds
+        if (!_result) {
+            revert DCAManager__JobManager__Cancel();
+        }
+        s_userJobs[msg.sender][jobId_] = 0;
+        // bool _result = IERC20(s_tokenAddr).transferFrom(
+        //     msg.sender,
+        //     address(this),
+        //     amount_
+        // );
     }
-
-    // function cancelAllJobs() returns (boolean)
 }

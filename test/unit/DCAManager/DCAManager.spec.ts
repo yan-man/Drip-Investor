@@ -145,7 +145,7 @@ export const DCAUnitTest = (): void => {
           expect(
             await this.dCAManager
               .connect(this.signers[0])
-              .getUserJobs(this.signers[0].address, _mockJobId)
+              .s_userJobs(this.signers[0].address, _mockJobId)
           ).to.be.equal(_depositAmount);
         });
 
@@ -181,7 +181,7 @@ export const DCAUnitTest = (): void => {
               .createDCAJob(_depositAmount, [0, 0]);
             await tx.wait();
             expect(
-              await this.dCAManager.getUserJobs(
+              await this.dCAManager.s_userJobs(
                 this.signers[1].address,
                 _mockJobId
               )
@@ -191,6 +191,12 @@ export const DCAUnitTest = (): void => {
             ).to.be.equal(this._depositAmount + _depositAmount);
           });
           it("Should allow cancellation from user", async function () {
+            console.log(
+              await this.dCAManager
+                .connect(this.signers[1])
+                .s_userJobs(this.signers[1].address, this._mockJobId)
+            );
+
             await this.mocks.mockJobManager.mock.isValidId.returns(true);
             await this.mocks.mockJobManager.mock.cancel.returns(true);
             await expect(
@@ -198,6 +204,12 @@ export const DCAUnitTest = (): void => {
                 .connect(this.signers[1])
                 .cancelJob(this._mockJobId)
             ).to.not.be.reverted;
+
+            console.log(
+              await this.dCAManager
+                .connect(this.signers[1])
+                .s_userJobs(this.signers[1].address, this._mockJobId)
+            );
           });
           it("Should throw if cancellation attempted for invalid id", async function () {
             await this.mocks.mockJobManager.mock.isValidId.returns(false);
@@ -230,13 +242,14 @@ export const DCAUnitTest = (): void => {
               .to.emit(this.dCAManager, `LogCreateJob`)
               .withArgs(this.signers[0].address, _depositAmount);
           });
+          it("Should emit when job is cancelled ", async function () {});
         });
       });
     });
   });
   describe("Events", function () {
     it("Should emit even when user creates a DCA job", async function () {});
-    it("Should set the right owner", async function () {});
-    it("Should set the right owner", async function () {});
+    // it("Should set the right owner", async function () {});
+    // it("Should set the right owner", async function () {});
   });
 };
