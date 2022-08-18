@@ -6,6 +6,8 @@ import "hardhat/console.sol";
 import "./libraries/DCAOptions.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+import "./libraries/DCAOptions.sol";
+
 // called by:
 // - KeepersManager
 
@@ -23,11 +25,8 @@ contract JobManager {
         uint256 frequencyOptionId;
         bool isActive;
         uint256 startTime;
-        uint256 amount;
-        // style:
-        // address from; // token addr (always USDC)
-        // address to; // always wETH
-        // always set these by default
+        uint256 amount; // this is actually the DCA amount to invest each time
+        // should have something like initialBalance
     }
 
     // State variables
@@ -39,8 +38,25 @@ contract JobManager {
 
     // Errors
     error JobManager__InvalidOwner();
+    error DCAOptions__InvalidOptions();
+    error JobManager__InvalidAmount();
 
     // Modifiers
+    modifier validateOptions(uint256[] calldata options_) {
+        if (!DCAOptions.validate(options_)) {
+            revert DCAOptions__InvalidOptions();
+        }
+        _;
+    }
+    modifier validate(address owner_, uint256 amount_) {
+        if (owner_ == address(0)) {
+            revert JobManager__InvalidOwner();
+        }
+        if (amount_ <= 0) {
+            revert JobManager__InvalidAmount();
+        }
+        _;
+    }
 
     // constructor
 
@@ -59,10 +75,12 @@ contract JobManager {
         address owner_,
         uint256 amount_,
         uint256[] calldata options_
-    ) external returns (uint256 _jobId) {
-        if (owner_ == address(0)) {
-            revert JobManager__InvalidOwner();
-        }
+    )
+        external
+        validate(owner_, amount_)
+        validateOptions(options_)
+        returns (uint256 _jobId)
+    {
         _jobId = _jobIds.current();
         s_jobs[_jobId] = Job({
             id: _jobId,

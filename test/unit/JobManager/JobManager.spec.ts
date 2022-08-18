@@ -5,7 +5,13 @@ import { ethers } from "hardhat";
 export const UnitTest = (): void => {
   describe("Deployment", function () {});
   describe("Create", function () {
-    it("Should revert if options param array doesn't have at least 1 element", async function () {});
+    it("Should revert if options param array doesn't have at least 1 element", async function () {
+      await expect(
+        this.jobManager
+          .connect(this.signers[0])
+          .create(this.signers[2].address, 1000, [])
+      ).to.be.reverted;
+    });
     it("Should revert if owner is zero address", async function () {});
     it("Should create job if validation successful", async function () {});
     describe("...after job1 created", function () {

@@ -44,13 +44,13 @@ export const unitJobManagerFixture: Fixture<UnitJobManagerFixtureType> = async (
 
   // const mockUsdc = await deployMockUsdc(deployer);
   // const mockJobManager = await deployMockJobManager(deployer);
-  // const DCAOptions: ContractFactory = await ethers.getContractFactory(
-  //   `DCAOptions`
-  // );
-  // const dCAOptions = await DCAOptions.deploy();
+  const DCAOptions: ContractFactory = await ethers.getContractFactory(
+    `DCAOptions`
+  );
+  const dCAOptions = await DCAOptions.deploy();
   const JobManagerFactory: ContractFactory = await ethers.getContractFactory(
-    `JobManager`
-    // { libraries: { DCAOptions: dCAOptions.address } }
+    `JobManager`,
+    { libraries: { DCAOptions: dCAOptions.address } }
   );
   const jobManager: JobManager = (await JobManagerFactory.connect(
     deployer
