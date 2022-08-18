@@ -18,15 +18,21 @@ contract DCAManager is Ownable {
         UNISWAP_MANAGER, // 3
         AAVE_MANAGER // 4
     }
+    struct UserJobs {
+        uint256[] jobIds;
+    }
 
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
-    JobManager private _s_jm;
+    mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
+    mapping(address => UserJobs) internal s_userJobs; // user address -> num tokens deposited
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
+    JobManager private _s_jm;
 
     // Events
     event LogContractAddrSet(uint256 id);
+    event LogCreateJob(address addr, uint256 amount);
 
     // Errors
     error DCAManager__CoreContractNotInitialized();
@@ -90,16 +96,17 @@ contract DCAManager is Ownable {
         }
     }
 
-    // Should receive tokens successfully before calling DCAOptions validation / Job Manager
-    function deposit(uint _amount) public payable {
-        // IERC20(token).transferFrom(msg.sender, address(this), _amount);
-    }
+    // // Should receive tokens successfully before calling DCAOptions validation / Job Manager
+    // function deposit(uint _amount) public payable {
+    //     // IERC20(token).transferFrom(msg.sender, address(this), _amount);
+    // }
 
     /**
-     * @param _amount amount of token that is
-     * @param _options options flag array. See DCAOptions library
+     * @param amount_ amount of token that is
+     * @param options_ options flag array. See DCAOptions library
+     * should return nothing, will be a tx
      */
-    function createDCAJob(uint256 _amount, uint256[] calldata _options)
+    function createDCAJob(uint256 amount_, uint256[] calldata options_)
         external
         isInitialized
         hasFunds
@@ -107,16 +114,31 @@ contract DCAManager is Ownable {
         bool _result = IERC20(s_tokenAddr).transferFrom(
             msg.sender,
             address(this),
-            _amount
+            amount_
         );
         if (!_result) {
             revert DCAManager__TransferError();
         }
-        // save into user's state deposit
-        // DCAOptions.helptest();
-        console.log(_s_jm.create());
-        // uint256 _jobId = _jm.create();
-        // console.log(_jobId);
-        // console.log(s_contractsLookup[CoreContractId.JOB_MANAGER]);
+        // add user token amount to existing deposit
+        uint256 _deposit = s_deposits[msg.sender];
+        s_deposits[msg.sender] = _deposit + amount_;
+        uint256 _jobId = _s_jm.create(msg.sender, options_); // create DCA job
+        s_userJobs[msg.sender].jobIds.push(_jobId);
+
+        emit LogCreateJob(msg.sender, amount_);
     }
+
+    function getUserJobIds(address addr_)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        return s_userJobs[addr_].jobIds;
+    }
+
+    // function withdraw () returns (boolean)
+    // cancels DCA job, returns funds to user
+
+    // when DCA is actually executed, make sure to update deposit
+    // function executeSwap
 }
