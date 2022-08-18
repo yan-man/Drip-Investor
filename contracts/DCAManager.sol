@@ -34,6 +34,7 @@ contract DCAManager is Ownable {
     // Events
     event LogContractAddrSet(uint256 id);
     event LogCreateJob(address addr, uint256 amount);
+    event LogCancelJob(uint256 jobId);
 
     // Errors
     error DCAManager__CoreContractNotInitialized();
@@ -157,5 +158,6 @@ contract DCAManager is Ownable {
             msg.sender,
             _amount
         );
+        emit LogCancelJob(jobId_);
     }
 }
