@@ -9,7 +9,7 @@ export const UnitTest = (): void => {
       await expect(
         this.jobManager
           .connect(this.signers[0])
-          .create(this.signers[2].address, 1000, [])
+          .create(this.signers[2].address, 1000, 100, [])
       ).to.be.reverted;
     });
     it("Should revert if owner is zero address", async function () {});
@@ -25,7 +25,7 @@ export const UnitTest = (): void => {
         await expect(
           this.jobManager
             .connect(this.signers[0])
-            .create(this.signers[2].address, 1000, [0])
+            .create(this.signers[2].address, 1000, 100, [0])
         ).to.emit(this.jobManager, `LogCreate`);
       });
     });
