@@ -116,25 +116,66 @@ export const DCAUnitTest = (): void => {
           );
         });
         // it("Should revert if invalid tokens are sent with request", async function () {});
-        it.only("Should call JobManager createDCAJob function if validation successful", async function () {
+        it("Should create DCA job if validation successful", async function () {
+          const _mockJobId = 2;
+
+          // set up mocks
           await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
           await this.mocks.mockUsdc.mock.transferFrom.returns(true);
+          await this.mocks.mockJobManager.mock.create.returns(_mockJobId);
 
+          // set JobManager contract address to mock
           await this.dCAManager
             .connect(this.signers[0])
             .setContractAddress(0, this.mocks.mockJobManager.address);
 
+          // create DCA job
+          const _depositAmount = 100;
           const tx = await this.dCAManager
             .connect(this.signers[0])
-            .createDCAJob(100, [1, 2]);
+            .createDCAJob(_depositAmount, [0, 0]);
           await tx.wait();
-          // console.log(
 
-          // );
+          // expect saved depsoit amount to match expected
+          expect(
+            await this.dCAManager
+              .connect(this.signers[0])
+              .s_deposits(this.signers[0].address)
+          ).to.be.equal(_depositAmount);
+
+          // expect jobId added to s_userJobs
+          const jobIds = await this.dCAManager
+            .connect(this.signers[0])
+            .getUserJobIds(this.signers[0].address);
+          expect(jobIds).to.be.a("array");
+          const jobIdsValues = jobIds.map((e: any) => e.toNumber());
+          expect(jobIdsValues).to.be.an("array").that.includes(_mockJobId);
         });
-        // describe("Events", function () {
-        //   it("Should emit event when valid DCA job is created", async function () {});
+
+        // describe("...After 1st DCA job created from user1", function () {
+        //   it("Should add to existing deposit amount if 2nd job created", async function () {});
         // });
+        describe("Events", function () {
+          it("Should emit event when valid DCA job is created", async function () {
+            const _mockJobId = 2;
+            // set up mocks
+            await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
+            await this.mocks.mockUsdc.mock.transferFrom.returns(true);
+            await this.mocks.mockJobManager.mock.create.returns(_mockJobId);
+            // set JobManager contract address to mock
+            await this.dCAManager
+              .connect(this.signers[0])
+              .setContractAddress(0, this.mocks.mockJobManager.address);
+            const _depositAmount = 100;
+            await expect(
+              this.dCAManager
+                .connect(this.signers[0])
+                .createDCAJob(_depositAmount, [0, 0])
+            )
+              .to.emit(this.dCAManager, `LogCreateJob`)
+              .withArgs(this.signers[0].address, _depositAmount);
+          });
+        });
         // describe("...after DCA job1 saved", function () {
         //   it("Should have expected tokens in contract after DCA job created", async function () {});
         // });

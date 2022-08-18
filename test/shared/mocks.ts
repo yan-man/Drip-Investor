@@ -28,7 +28,7 @@ export const deployMockJobManager = async (
     deployer,
     JobManager_ABI.abi
   );
-  await jobManager.mock.create.returns(5);
+  await jobManager.mock.create.returns(1);
 
   return jobManager;
 };
