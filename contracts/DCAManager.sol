@@ -40,6 +40,7 @@ contract DCAManager is Ownable {
     error DCAManager__InsufficientFunds();
     error DCAManager__TransferError();
     error DCAManager__InvalidJobId(uint256 jobId);
+    error DCAManager__InvalidJobCreator(address addr);
 
     // Modifiers
     modifier isInitialized() {
@@ -149,7 +150,9 @@ contract DCAManager is Ownable {
         isValidJobId(jobId_)
         returns (bool)
     {
-        // s_userJobs[msg.sender].jobIds
+        if (!s_userJobs[msg.sender].job[jobId_]) {
+            revert DCAManager__InvalidJobCreator(msg.sender);
+        }
         // cancels DCA job, returns funds to user
         // _s_jm.cancel();
     }
