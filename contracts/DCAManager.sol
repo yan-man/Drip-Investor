@@ -19,7 +19,8 @@ contract DCAManager is Ownable {
         AAVE_MANAGER // 4
     }
     struct UserJobs {
-        uint256[] jobIds;
+        // uint256[] jobIds;
+        mapping(uint256 => bool) job; // job id => exists?
     }
 
     // State variables
@@ -130,17 +131,17 @@ contract DCAManager is Ownable {
         uint256 _deposit = s_deposits[msg.sender];
         s_deposits[msg.sender] = _deposit + amount_;
         uint256 _jobId = _s_jm.create(msg.sender, options_); // create DCA job
-        s_userJobs[msg.sender].jobIds.push(_jobId);
+        s_userJobs[msg.sender].job[_jobId] = true;
 
         emit LogCreateJob(msg.sender, amount_);
     }
 
-    function getUserJobIds(address addr_)
+    function getUserJobIds(address addr_, uint256 id_)
         external
         view
-        returns (uint256[] memory)
+        returns (bool)
     {
-        return s_userJobs[addr_].jobIds;
+        return s_userJobs[addr_].job[id_];
     }
 
     function cancelJob(uint256 jobId_)
@@ -148,6 +149,7 @@ contract DCAManager is Ownable {
         isValidJobId(jobId_)
         returns (bool)
     {
+        // s_userJobs[msg.sender].jobIds
         // cancels DCA job, returns funds to user
         // _s_jm.cancel();
     }

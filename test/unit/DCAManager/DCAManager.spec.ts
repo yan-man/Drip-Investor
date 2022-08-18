@@ -116,7 +116,7 @@ export const DCAUnitTest = (): void => {
           );
         });
         // it("Should revert if invalid tokens are sent with request", async function () {});
-        it("Should create DCA job if validation successful", async function () {
+        it.only("Should create DCA job if validation successful", async function () {
           const _mockJobId = 2;
 
           // set up mocks
@@ -143,13 +143,11 @@ export const DCAUnitTest = (): void => {
               .s_deposits(this.signers[0].address)
           ).to.be.equal(_depositAmount);
 
-          // expect jobId added to s_userJobs
-          const jobIds = await this.dCAManager
-            .connect(this.signers[0])
-            .getUserJobIds(this.signers[0].address);
-          expect(jobIds).to.be.a("array");
-          const jobIdsValues = jobIds.map((e: any) => e.toNumber());
-          expect(jobIdsValues).to.be.an("array").that.includes(_mockJobId);
+          expect(
+            await this.dCAManager
+              .connect(this.signers[0])
+              .getUserJobIds(this.signers[0].address, _mockJobId)
+          ).to.be.equal(true);
         });
 
         describe("...After 1st DCA job created from user1", function () {
