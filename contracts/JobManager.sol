@@ -65,7 +65,7 @@ contract JobManager {
         _jobIds.increment();
     }
 
-    // function destroy
+    // function cancel (uint256 id)
     // erases Job of given jobId - set inactive
     // return true if so
 

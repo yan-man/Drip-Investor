@@ -136,9 +136,10 @@ contract DCAManager is Ownable {
         return s_userJobs[addr_].jobIds;
     }
 
-    // function withdraw () returns (boolean)
-    // cancels DCA job, returns funds to user
+    function cancelJob(uint256 jobId_) external returns (bool) {
+        // cancels DCA job, returns funds to user
+        // _s_jm.cancel();
+    }
 
-    // when DCA is actually executed, make sure to update deposit
-    // function executeSwap
+    // function cancelAllJobs() returns (boolean)
 }

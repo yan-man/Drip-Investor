@@ -28,4 +28,6 @@ contract TradeManager {
     // Public functions
     // Internal functions
     // Private functions
+    // when DCA is actually executed, make sure to update deposit
+    // function executeSwap
 }

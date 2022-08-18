@@ -152,9 +152,43 @@ export const DCAUnitTest = (): void => {
           expect(jobIdsValues).to.be.an("array").that.includes(_mockJobId);
         });
 
-        // describe("...After 1st DCA job created from user1", function () {
-        //   it("Should add to existing deposit amount if 2nd job created", async function () {});
-        // });
+        describe("...After 1st DCA job created from user1", function () {
+          beforeEach(`...save 1st DCA job`, async function () {
+            this._mockJobId = 2;
+
+            // set up mocks
+            await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
+            await this.mocks.mockUsdc.mock.transferFrom.returns(true);
+            await this.mocks.mockJobManager.mock.create.returns(
+              this._mockJobId
+            );
+
+            // set JobManager contract address to mock
+            await this.dCAManager
+              .connect(this.signers[0])
+              .setContractAddress(0, this.mocks.mockJobManager.address);
+
+            // create DCA job
+            this._depositAmount = 100;
+            const tx = await this.dCAManager
+              .connect(this.signers[1])
+              .createDCAJob(this._depositAmount, [0, 0]);
+            await tx.wait();
+          });
+          it("Should add to existing deposit amount if 2nd job created", async function () {
+            const _depositAmount = 200;
+            const tx = await this.dCAManager
+              .connect(this.signers[1])
+              .createDCAJob(_depositAmount, [0, 0]);
+            await tx.wait();
+
+            expect(
+              await this.dCAManager
+                .connect(this.signers[1])
+                .s_deposits(this.signers[1].address)
+            ).to.be.equal(this._depositAmount + _depositAmount);
+          });
+        });
         describe("Events", function () {
           it("Should emit event when valid DCA job is created", async function () {
             const _mockJobId = 2;
@@ -176,9 +210,6 @@ export const DCAUnitTest = (): void => {
               .withArgs(this.signers[0].address, _depositAmount);
           });
         });
-        // describe("...after DCA job1 saved", function () {
-        //   it("Should have expected tokens in contract after DCA job created", async function () {});
-        // });
       });
     });
   });
