@@ -188,6 +188,19 @@ export const DCAUnitTest = (): void => {
                 .s_deposits(this.signers[1].address)
             ).to.be.equal(this._depositAmount + _depositAmount);
           });
+          it("Should allow cancellation from user", async function () {
+            // await this.mocks.mockJobManager.mock.isValidId.returns(false);
+            // await this.mocks.mockJobManager.mock.cancel.returns(
+            //   true
+            // );
+            // expect(await this.dCAManager.connect(this.signers[1]).cancelJob());
+          });
+          it.only("Should throw if cancellation attempted for invalid id", async function () {
+            await this.mocks.mockJobManager.mock.isValidId.returns(false);
+          });
+          it("Should throw if cancellation attempted by non owner", async function () {});
+          // it("", async function () {});
+          // it("", async function () {});
         });
         describe("Events", function () {
           it("Should emit event when valid DCA job is created", async function () {

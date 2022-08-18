@@ -65,6 +65,12 @@ contract JobManager {
         _jobIds.increment();
     }
 
+    function isValidId(uint256 id_) public view returns (bool _result) {
+        if (s_jobs[id_].startTime != 0) {
+            _result = true;
+        }
+    }
+
     // function cancel (uint256 id)
     // erases Job of given jobId - set inactive
     // return true if so

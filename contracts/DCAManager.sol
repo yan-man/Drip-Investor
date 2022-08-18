@@ -38,6 +38,7 @@ contract DCAManager is Ownable {
     error DCAManager__CoreContractNotInitialized();
     error DCAManager__InsufficientFunds();
     error DCAManager__TransferError();
+    error DCAManager__InvalidJobId(uint256 jobId);
 
     // Modifiers
     modifier isInitialized() {
@@ -49,6 +50,12 @@ contract DCAManager is Ownable {
     modifier hasFunds() {
         if (IERC20(s_tokenAddr).balanceOf(msg.sender) == 0) {
             revert DCAManager__InsufficientFunds();
+        }
+        _;
+    }
+    modifier isValidJobId(uint256 jobId_) {
+        if (!_s_jm.isValidId(jobId_)) {
+            revert DCAManager__InvalidJobId(jobId_);
         }
         _;
     }
@@ -136,7 +143,11 @@ contract DCAManager is Ownable {
         return s_userJobs[addr_].jobIds;
     }
 
-    function cancelJob(uint256 jobId_) external returns (bool) {
+    function cancelJob(uint256 jobId_)
+        external
+        isValidJobId(jobId_)
+        returns (bool)
+    {
         // cancels DCA job, returns funds to user
         // _s_jm.cancel();
     }
