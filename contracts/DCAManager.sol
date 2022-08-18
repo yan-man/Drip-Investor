@@ -43,6 +43,7 @@ contract DCAManager is Ownable {
     error DCAManager__InvalidJobId(uint256 jobId);
     error DCAManager__InvalidJobCreator(address addr);
     error DCAManager__JobManager__Cancel();
+    error DCAManager__InvalidInvestment();
 
     // Modifiers
     modifier isInitialized() {
@@ -60,6 +61,13 @@ contract DCAManager is Ownable {
     modifier isValidJobId(uint256 jobId_) {
         if (!_s_jm.isValidId(jobId_)) {
             revert DCAManager__InvalidJobId(jobId_);
+        }
+        _;
+    }
+    modifier validateInputs(uint256 amount_, uint256 investmentAmount_) {
+        // console.log("here validateInputs");
+        if (amount_ < investmentAmount_) {
+            revert DCAManager__InvalidInvestment();
         }
         _;
     }
@@ -121,7 +129,12 @@ contract DCAManager is Ownable {
         uint256 amount_,
         uint256 investmentAmount_,
         uint256[] calldata options_
-    ) external isInitialized hasFunds(amount_) {
+    )
+        external
+        validateInputs(amount_, investmentAmount_)
+        isInitialized
+        hasFunds(amount_)
+    {
         bool _result = IERC20(s_tokenAddr).transferFrom(
             msg.sender,
             address(this),

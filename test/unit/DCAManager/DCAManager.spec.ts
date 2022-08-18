@@ -119,13 +119,16 @@ export const UnitTest = (): void => {
         );
       });
       it("Should revert if user has insufficient funds", async function () {
-        await this.mocks.mockUsdc.mock.balanceOf.returns(1);
         await this.mocks.mockUsdc.mock.transferFrom.returns(false);
+        await this.mocks.mockUsdc.mock.balanceOf.returns(100);
+
         await expect(
-          this.dCAManager.connect(this.signers[0]).createDCAJob(100, 10, [1, 2])
+          this.dCAManager
+            .connect(this.signers[0])
+            .createDCAJob(100, 200, [1, 2])
         ).to.be.revertedWithCustomError(
           this.dCAManager,
-          `DCAManager__InsufficientFunds`
+          `DCAManager__InvalidInvestment`
         );
       });
       // it("Should revert if invalid tokens are sent with request", async function () {});
