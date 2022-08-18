@@ -25,7 +25,8 @@ contract JobManager {
         uint256 frequencyOptionId;
         bool isActive;
         uint256 startTime;
-        uint256 amount; // this is actually the DCA amount to invest each time
+        uint256 initialBalance; // this is actually the DCA amount to invest each time
+        uint256 investmentAmount;
         // should have something like initialBalance
     }
 
@@ -74,6 +75,7 @@ contract JobManager {
     function create(
         address owner_,
         uint256 amount_,
+        uint256 investmentAmount_,
         uint256[] calldata options_
     )
         external
@@ -88,7 +90,8 @@ contract JobManager {
             frequencyOptionId: options_[0],
             startTime: block.timestamp,
             isActive: true,
-            amount: amount_
+            initialBalance: amount_,
+            investmentAmount: investmentAmount_
         });
         _jobIds.increment();
 
