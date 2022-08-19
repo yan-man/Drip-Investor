@@ -36,14 +36,39 @@ export const UnitTest = (): void => {
       );
     });
     it("Should create job if validation successful", async function () {
-      await this.jobManager
-        .connect(this.signers[0])
-        .create(this.signers[1].address, 1000, 100, [0]);
+      const _amount = 1000;
+      const _investmentAmount = 100;
+      await expect(
+        this.jobManager
+          .connect(this.signers[0])
+          .create(this.signers[1].address, _amount, _investmentAmount, [0])
+      ).to.not.be.reverted;
+      expect(await this.jobManager.getCurrentId()).to.be.equal(1);
     });
     describe("...after job1 created", function () {
-      beforeEach(`...create job1`, async function () {});
+      beforeEach(`...create job1`, async function () {
+        this._amount = 1000;
+        this._investmentAmount = 100;
+        await this.jobManager
+          .connect(this.signers[0])
+          .create(
+            this.signers[1].address,
+            this._amount,
+            this._investmentAmount,
+            [0]
+          );
+      });
       it("Should have updated jobIds counter after create", async function () {});
-      it("Should have updated s_jobs var after create", async function () {});
+      it("Should have updated s_jobs var after create", async function () {
+        const _job = await this.jobManager.s_jobs(0);
+        expect(_job.id).to.be.equal(0);
+        expect(_job.owner).to.be.equal(this.signers[1].address);
+        expect(_job.frequencyOptionId).to.be.equal(0);
+        expect(_job.isActive).to.be.equal(true);
+        expect(_job.startTime).to.be.equal(await time.latest());
+        expect(_job.initialBalance).to.be.equal(this._amount);
+        expect(_job.investmentAmount).to.be.equal(this._investmentAmount);
+      });
     });
 
     describe("Events", function () {

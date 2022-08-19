@@ -98,6 +98,10 @@ contract JobManager {
         emit LogCreate(owner_, amount_, options_);
     }
 
+    function getCurrentId() external view returns (uint256) {
+        return _jobIds.current();
+    }
+
     function isValidId(uint256 id_) public view returns (bool _result) {
         if (s_jobs[id_].startTime != 0) {
             _result = true;
