@@ -25,7 +25,21 @@ export const UnitTest = (): void => {
         `JobManager__InvalidOwner`
       );
     });
-    it("Should create job if validation successful", async function () {});
+    it("Should revert if amount is <= 0", async function () {
+      await expect(
+        this.jobManager
+          .connect(this.signers[0])
+          .create(this.signers[1].address, 0, 100, [0])
+      ).to.be.revertedWithCustomError(
+        this.jobManager,
+        `JobManager__InvalidAmount`
+      );
+    });
+    it("Should create job if validation successful", async function () {
+      await this.jobManager
+        .connect(this.signers[0])
+        .create(this.signers[1].address, 1000, 100, [0]);
+    });
     describe("...after job1 created", function () {
       beforeEach(`...create job1`, async function () {});
       it("Should have updated jobIds counter after create", async function () {});
