@@ -43,6 +43,11 @@ export const UnitTest = (): void => {
           .create(this.signers[1].address, _investmentAmount, [0])
       ).to.not.be.reverted;
     });
+    it("Should get zero active jobIds", async function () {
+      const _jobIds = await this.jobManager.getActiveJobIds();
+      expect(_jobIds).to.be.a("array");
+      expect(_jobIds.length).to.be.equal(0);
+    });
     describe("Events", function () {
       it("Should emit event during create", async function () {
         await expect(
@@ -75,6 +80,13 @@ export const UnitTest = (): void => {
         expect(_job.startTime).to.be.equal(await time.latest());
         expect(_job.investmentAmount).to.be.equal(this._investmentAmount);
       });
+      it("Should get active jobIds", async function () {
+        const _jobIds = await this.jobManager.getActiveJobIds();
+        const jobIdsValues = _jobIds.map((e: any) => e.toNumber());
+        expect(_jobIds).to.be.an("array");
+        expect(_jobIds.length).to.be.equal(1);
+        expect(jobIdsValues).to.be.an("array").that.includes(0);
+      });
       describe("Cancel", function () {
         it("Should revert if no active job exists", async function () {
           await expect(this.jobManager.cancel(5)).to.be.reverted;
@@ -85,6 +97,7 @@ export const UnitTest = (): void => {
           expect(_job.isActive).to.be.equal(false);
           expect(await this.jobManager._s_numActiveJobs()).to.be.equal(0);
         });
+
         describe("Events", function () {
           it("Should emit event during cancel", async function () {
             await expect(this.jobManager.connect(this.signers[0]).cancel(0))

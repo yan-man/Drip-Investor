@@ -98,14 +98,16 @@ contract JobManager {
         view
         returns (uint256[] memory _result)
     {
-        _result = new uint256[](_s_numActiveJobs);
+        uint256 _numActiveJobs = _s_numActiveJobs;
+        _result = new uint256[](_numActiveJobs);
         uint256 _resultId;
         uint256 _idx;
         uint256 _maxId = _jobIds.current();
-        while (_idx < _maxId) {
+        while (_idx < _maxId && _resultId < _numActiveJobs) {
             Job memory _job = s_jobs[_idx];
             if (_job.startTime != 0 && _job.isActive) {
                 _result[_resultId] = _job.id;
+                _resultId++;
             }
             _idx++;
         }
