@@ -10,7 +10,8 @@ import "hardhat/console.sol";
 // execute jobs by calling aave/uniswap managers
 
 // calls:
-// - TradeManager
+// - JobManager to see which active jobs to execute
+// - TradeManager ot actually execute trade
 
 // caller:
 // - JobManager

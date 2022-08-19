@@ -9,7 +9,7 @@ export const UnitTest = (): void => {
       await expect(
         this.jobManager
           .connect(this.signers[0])
-          .create(this.signers[2].address, 1000, 100, [])
+          .create(this.signers[2].address, 100, [])
       ).to.be.revertedWithCustomError(
         this.jobManager,
         `DCAOptions__InvalidOptions`
@@ -19,7 +19,7 @@ export const UnitTest = (): void => {
       await expect(
         this.jobManager
           .connect(this.signers[0])
-          .create(ethers.constants.AddressZero, 1000, 100, [0])
+          .create(ethers.constants.AddressZero, 100, [0])
       ).to.be.revertedWithCustomError(
         this.jobManager,
         `JobManager__InvalidOwner`
@@ -29,20 +29,28 @@ export const UnitTest = (): void => {
       await expect(
         this.jobManager
           .connect(this.signers[0])
-          .create(this.signers[1].address, 0, 100, [0])
+          .create(this.signers[1].address, 0, [0])
       ).to.be.revertedWithCustomError(
         this.jobManager,
         `JobManager__InvalidAmount`
       );
     });
     it("Should create job if validation successful", async function () {
-      const _amount = 1000;
       const _investmentAmount = 100;
       await expect(
         this.jobManager
           .connect(this.signers[0])
-          .create(this.signers[1].address, _amount, _investmentAmount, [0])
+          .create(this.signers[1].address, _investmentAmount, [0])
       ).to.not.be.reverted;
+    });
+    describe("Events", function () {
+      it("Should emit event during create", async function () {
+        await expect(
+          this.jobManager
+            .connect(this.signers[0])
+            .create(this.signers[2].address, 100, [0])
+        ).to.emit(this.jobManager, `LogCreate`);
+      });
     });
     describe("...after job1 created", function () {
       beforeEach(`...create job1`, async function () {
@@ -50,12 +58,7 @@ export const UnitTest = (): void => {
         this._investmentAmount = 100;
         await this.jobManager
           .connect(this.signers[0])
-          .create(
-            this.signers[1].address,
-            this._amount,
-            this._investmentAmount,
-            [0]
-          );
+          .create(this.signers[1].address, this._investmentAmount, [0]);
       });
       it("Should have updated jobIds counter after create", async function () {
         expect(await this.jobManager.getCurrentId()).to.be.equal(1);
@@ -67,33 +70,31 @@ export const UnitTest = (): void => {
         expect(_job.frequencyOptionId).to.be.equal(0);
         expect(_job.isActive).to.be.equal(true);
         expect(_job.startTime).to.be.equal(await time.latest());
-        expect(_job.initialBalance).to.be.equal(this._amount);
         expect(_job.investmentAmount).to.be.equal(this._investmentAmount);
       });
       describe("Cancel", function () {
         it("Should revert if no active job exists", async function () {
           await expect(this.jobManager.cancel(5)).to.be.reverted;
         });
-
+        it("Should not revert if validation succeeds", async function () {
+          await expect(this.jobManager.cancel(0)).to.not.be.reverted;
+          const _job = await this.jobManager.s_jobs(0);
+          expect(_job.isActive).to.be.equal(false);
+        });
         describe("Events", function () {
-          it("Should emit event during create", async function () {
+          it("Should emit event during cancel", async function () {
             await expect(
               this.jobManager
                 .connect(this.signers[0])
-                .create(this.signers[2].address, 1000, 100, [0])
-            ).to.emit(this.jobManager, `LogCreate`);
+                .create(this.signers[2].address, 100, [0])
+            )
+              .to.emit(this.jobManager, `LogCreate`)
+              .withArgs(this.signers[2].address, 100, [0]);
           });
         });
-      });
-    });
-
-    describe("Events", function () {
-      it("Should emit event during create", async function () {
-        await expect(
-          this.jobManager
-            .connect(this.signers[0])
-            .create(this.signers[2].address, 1000, 100, [0])
-        ).to.emit(this.jobManager, `LogCreate`);
+        describe("...After job1 is cancelled", function () {
+          it("Should emit event during cancel", async function () {});
+        });
       });
     });
   });

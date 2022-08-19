@@ -26,7 +26,6 @@ contract JobManager {
         uint256 frequencyOptionId;
         bool isActive;
         uint256 startTime;
-        uint256 initialBalance; // this is actually the DCA amount to invest each time
         uint256 investmentAmount;
         // should have something like initialBalance
     }
@@ -37,7 +36,8 @@ contract JobManager {
     // DCAManager private _s_dcam;
 
     // Events
-    event LogCreate(address owner_, uint256 amount_, uint256[] options_);
+    event LogCreate(address owner, uint256 investmentAmount, uint256[] options);
+    event LogCancelJob(uint256 id);
 
     // Errors
     error JobManager__InvalidOwner();
@@ -52,11 +52,11 @@ contract JobManager {
         }
         _;
     }
-    modifier validateCreate(address owner_, uint256 amount_) {
+    modifier validateCreate(address owner_, uint256 investmentAmount_) {
         if (owner_ == address(0)) {
             revert JobManager__InvalidOwner();
         }
-        if (amount_ <= 0) {
+        if (investmentAmount_ <= 0) {
             revert JobManager__InvalidAmount();
         }
         _;
@@ -87,12 +87,11 @@ contract JobManager {
     // return newly saved id
     function create(
         address owner_,
-        uint256 amount_,
         uint256 investmentAmount_,
         uint256[] calldata options_
     )
         external
-        validateCreate(owner_, amount_)
+        validateCreate(owner_, investmentAmount_)
         validateOptions(options_)
         returns (uint256 _jobId)
     {
@@ -103,12 +102,11 @@ contract JobManager {
             frequencyOptionId: options_[0],
             startTime: block.timestamp,
             isActive: true,
-            initialBalance: amount_,
             investmentAmount: investmentAmount_
         });
         _jobIds.increment();
 
-        emit LogCreate(owner_, amount_, options_);
+        emit LogCreate(owner_, investmentAmount_, options_);
     }
 
     function getCurrentId() external view returns (uint256) {
@@ -126,12 +124,10 @@ contract JobManager {
         validateCancel(id_)
         returns (bool _result)
     {
-        return true;
-    }
-    // erases Job of given jobId - set inactive
-    // return true if so
+        Job storage _job = s_jobs[id_];
+        _job.isActive = false;
+        _result = true;
 
-    // function getJobId
-    // just get the next jobId
-    // return jobIds.current()
+        emit LogCancelJob(id_);
+    }
 }
