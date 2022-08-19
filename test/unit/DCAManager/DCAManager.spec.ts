@@ -280,6 +280,9 @@ export const UnitTest = (): void => {
           await this.dCAManager
             .connect(this.signers[0])
             .setContractAddress(0, this.mocks.mockJobManager.address);
+          await this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(2, this.mocks.mockTradeManager.address);
           const _depositAmount = 100;
           await expect(
             this.dCAManager
