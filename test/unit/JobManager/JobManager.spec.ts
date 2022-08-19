@@ -83,6 +83,7 @@ export const UnitTest = (): void => {
           await expect(this.jobManager.cancel(0)).to.not.be.reverted;
           const _job = await this.jobManager.s_jobs(0);
           expect(_job.isActive).to.be.equal(false);
+          expect(await this.jobManager._s_numActiveJobs()).to.be.equal(0);
         });
         describe("Events", function () {
           it("Should emit event during cancel", async function () {
@@ -91,10 +92,14 @@ export const UnitTest = (): void => {
               .withArgs(0);
           });
         });
-        describe("...After job1 is cancelled", function () {
-          beforeEach(`...cancel job1`, async function () {});
-          // it("Should emit event during cancel", async function () {});
-        });
+        // describe("...After job1 is cancelled", function () {
+        //   beforeEach(`...cancel job1`, async function () {
+
+        //   });
+        //   it("Should update _s_numActiveJobs var", async function () {
+
+        //   });
+        // });
       });
     });
   });
