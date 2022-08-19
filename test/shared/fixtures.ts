@@ -1,7 +1,12 @@
 import { Fixture, MockContract } from "ethereum-waffle";
 import { ContractFactory, Wallet } from "ethers";
 import { ethers } from "hardhat";
-import { DCAManager, JobManager, TradeManager } from "../../typechain-types";
+import {
+  DCAManager,
+  JobManager,
+  TradeManager,
+  KeepersManager,
+} from "../../typechain-types";
 import {
   deployMockUsdc,
   deployMockJobManager,
@@ -20,6 +25,10 @@ type UnitJobManagerFixtureType = {
 
 type UnitTradeManagerFixtureType = {
   tradeManager: TradeManager;
+};
+
+type UnitKeepersManagerFixtureType = {
+  keepersManager: KeepersManager;
 };
 
 export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
@@ -84,4 +93,19 @@ export const unitTradeManagerFixture: Fixture<
   await tradeManager.deployed();
 
   return { tradeManager };
+};
+
+export const unitKeepersManagerFixture: Fixture<
+  UnitKeepersManagerFixtureType
+> = async (signers: Wallet[]) => {
+  const deployer: Wallet = signers[0];
+  const KeepersManagerFactory: ContractFactory =
+    await ethers.getContractFactory(`KeepersManager`);
+  const keepersManager: KeepersManager = (await KeepersManagerFactory.connect(
+    deployer
+  ).deploy()) as KeepersManager;
+
+  await keepersManager.deployed();
+
+  return { keepersManager };
 };

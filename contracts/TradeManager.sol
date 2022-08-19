@@ -30,9 +30,10 @@ contract TradeManager {
     // Internal functions
     // Private functions
 
-    // deposit into Aave; could be something else
+    // deposit into Aave
     function deposit() public returns (bool _result) {
         _result = true;
+        // call aave manager, to deposit
     }
 
     // when DCA is actually executed, make sure to update deposit

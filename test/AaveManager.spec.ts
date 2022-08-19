@@ -9,13 +9,13 @@ describe("Aave Manager", function () {
     // this.dCAManager = await DCAManager.deploy();
   });
   describe("Deployment", function () {
-    it("Should set the right owner", async function () {
-      // expect(await this.dCAManager.owner()).to.equal(this.signers[0].address);
-    });
-    it("Should set the right owner", async function () {});
-    it("Should set the right owner", async function () {});
-    it("Should set the right owner", async function () {});
-    it("Should set the right owner", async function () {});
-    it("Should set the right owner", async function () {});
+    // it("Should set the right owner", async function () {
+    //   // expect(await this.dCAManager.owner()).to.equal(this.signers[0].address);
+    // });
+    // it("Should set the right owner", async function () {});
+    // it("Should set the right owner", async function () {});
+    // it("Should set the right owner", async function () {});
+    // it("Should set the right owner", async function () {});
+    // it("Should set the right owner", async function () {});
   });
 });

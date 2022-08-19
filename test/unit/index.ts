@@ -3,10 +3,12 @@ import {
   unitDCAManagerFixture,
   unitJobManagerFixture,
   unitTradeManagerFixture,
+  unitKeepersManagerFixture,
 } from "../shared/fixtures";
 import { Mocks, Signers } from "../shared/types";
 import { UnitTest as DCAManagerUnitTest } from "./DCAManager/DCAManager.spec";
 import { UnitTest as JobManagerUnitTest } from "./JobManager/JobManager.spec";
+import { UnitTest as KeepersManagerUnitTest } from "./KeepersManager/KeepersManager.spec";
 import { UnitTest as TradeManagerUnitTest } from "./TradeManager/TradeManager.spec";
 
 describe(`Unit tests`, async () => {
@@ -35,6 +37,18 @@ describe(`Unit tests`, async () => {
     DCAManagerUnitTest();
   });
 
+  describe(`JobManager`, async () => {
+    beforeEach(async function () {
+      const { jobManager } = await this.loadFixture(unitJobManagerFixture);
+
+      this.jobManager = jobManager;
+      this.mocks = {} as Mocks;
+
+      // console.log(this.mocks.mockJobManager);
+    });
+    JobManagerUnitTest();
+  });
+
   describe(`TradeManager`, async () => {
     beforeEach(async function () {
       const { tradeManager } = await this.loadFixture(unitTradeManagerFixture);
@@ -42,5 +56,16 @@ describe(`Unit tests`, async () => {
       this.mocks = {} as Mocks;
     });
     TradeManagerUnitTest();
+  });
+
+  describe(`KeepersManager`, async () => {
+    beforeEach(async function () {
+      const { keepersManager } = await this.loadFixture(
+        unitKeepersManagerFixture
+      );
+      this.keepersManager = keepersManager;
+      this.mocks = {} as Mocks;
+    });
+    KeepersManagerUnitTest();
   });
 });
