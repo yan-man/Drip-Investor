@@ -33,6 +33,7 @@ contract JobManager {
     // State variables
     mapping(uint256 => Job) public s_jobs; // jobId -> Job
     Counters.Counter private _jobIds; // 0-indexed
+    uint256 public _s_numActiveJobs; // needed to simplify memory array passed from getValidIds
     // DCAManager private _s_dcam;
 
     // Events
@@ -62,7 +63,7 @@ contract JobManager {
         _;
     }
     modifier validateCancel(uint256 id_) {
-        if (!isValidId(id_)) {
+        if (!this.isValidId(id_)) {
             revert JobManager__InvalidId(id_);
         }
         _;
@@ -82,9 +83,31 @@ contract JobManager {
     // Internal functions
     // Private functions
 
-    function isValidId(uint256 id_) public view returns (bool _result) {
+    function isValidId(uint256 id_) external view returns (bool _result) {
         if (s_jobs[id_].startTime != 0 && s_jobs[id_].isActive) {
             _result = true;
+        }
+    }
+
+    function getCurrentId() external view returns (uint256) {
+        return _jobIds.current();
+    }
+
+    function getActiveJobIds()
+        external
+        view
+        returns (uint256[] memory _result)
+    {
+        _result = new uint256[](_s_numActiveJobs);
+        uint256 _resultId;
+        uint256 _idx;
+        uint256 _maxId = _jobIds.current();
+        while (_idx < _maxId) {
+            Job memory _job = s_jobs[_idx];
+            if (_job.startTime != 0 && _job.isActive) {
+                _result[_resultId] = _job.id;
+            }
+            _idx++;
         }
     }
 
@@ -112,12 +135,8 @@ contract JobManager {
             investmentAmount: investmentAmount_
         });
         _jobIds.increment();
-
+        _s_numActiveJobs++;
         emit LogCreate(owner_, investmentAmount_, options_);
-    }
-
-    function getCurrentId() external view returns (uint256) {
-        return _jobIds.current();
     }
 
     function cancel(uint256 id_)
@@ -128,7 +147,7 @@ contract JobManager {
         Job storage _job = s_jobs[id_];
         _job.isActive = false;
         _result = true;
-
+        _s_numActiveJobs--;
         emit LogCancelJob(id_);
     }
 }
