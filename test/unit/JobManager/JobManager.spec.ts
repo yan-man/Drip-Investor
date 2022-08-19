@@ -87,6 +87,33 @@ export const UnitTest = (): void => {
         expect(_jobIds.length).to.be.equal(1);
         expect(jobIdsValues).to.be.an("array").that.includes(0);
       });
+      describe("...after job2 created", function () {
+        beforeEach(`...create job2`, async function () {
+          this._investmentAmount = 200;
+          await this.jobManager
+            .connect(this.signers[0])
+            .create(this.signers[3].address, this._investmentAmount, [0]);
+        });
+        it("Should update _s_numActiveJobs var", async function () {
+          expect(await this.jobManager._s_numActiveJobs()).to.be.equal(2);
+        });
+        it("Should get getActiveJobIds", async function () {
+          const _jobIds = await this.jobManager.getActiveJobIds();
+          const jobIdsValues = _jobIds.map((e: any) => e.toNumber());
+          expect(_jobIds).to.be.an("array");
+          expect(_jobIds.length).to.be.equal(2);
+          expect(jobIdsValues).to.be.an("array").that.includes(1);
+        });
+        it("Should have updated s_jobs var after create2", async function () {
+          const _job = await this.jobManager.s_jobs(1);
+          expect(_job.id).to.be.equal(1);
+          expect(_job.owner).to.be.equal(this.signers[3].address);
+          expect(_job.frequencyOptionId).to.be.equal(0);
+          expect(_job.isActive).to.be.equal(true);
+          expect(_job.startTime).to.be.equal(await time.latest());
+          expect(_job.investmentAmount).to.be.equal(this._investmentAmount);
+        });
+      });
       describe("Cancel", function () {
         it("Should revert if no active job exists", async function () {
           await expect(this.jobManager.cancel(5)).to.be.reverted;
