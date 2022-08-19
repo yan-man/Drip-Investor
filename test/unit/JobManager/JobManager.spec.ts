@@ -48,6 +48,9 @@ export const UnitTest = (): void => {
       expect(_jobIds).to.be.a("array");
       expect(_jobIds.length).to.be.equal(0);
     });
+    it("Should return false from isValidId", async function () {
+      expect(await this.jobManager.isValidId(0)).to.be.equal(false);
+    });
     describe("Events", function () {
       it("Should emit event during create", async function () {
         await expect(
