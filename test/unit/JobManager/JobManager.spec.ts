@@ -83,17 +83,14 @@ export const UnitTest = (): void => {
         });
         describe("Events", function () {
           it("Should emit event during cancel", async function () {
-            await expect(
-              this.jobManager
-                .connect(this.signers[0])
-                .create(this.signers[2].address, 100, [0])
-            )
-              .to.emit(this.jobManager, `LogCreate`)
-              .withArgs(this.signers[2].address, 100, [0]);
+            await expect(this.jobManager.connect(this.signers[0]).cancel(0))
+              .to.emit(this.jobManager, `LogCancelJob`)
+              .withArgs(0);
           });
         });
         describe("...After job1 is cancelled", function () {
-          it("Should emit event during cancel", async function () {});
+          beforeEach(`...cancel job1`, async function () {});
+          // it("Should emit event during cancel", async function () {});
         });
       });
     });

@@ -82,9 +82,16 @@ contract JobManager {
     // Internal functions
     // Private functions
 
+    function isValidId(uint256 id_) public view returns (bool _result) {
+        if (s_jobs[id_].startTime != 0 && s_jobs[id_].isActive) {
+            _result = true;
+        }
+    }
+
     // external, only called by DCAManager
     // should save a new job and show active or not
     // return newly saved id
+
     function create(
         address owner_,
         uint256 investmentAmount_,
@@ -111,12 +118,6 @@ contract JobManager {
 
     function getCurrentId() external view returns (uint256) {
         return _jobIds.current();
-    }
-
-    function isValidId(uint256 id_) public view returns (bool _result) {
-        if (s_jobs[id_].startTime != 0 && s_jobs[id_].isActive) {
-            _result = true;
-        }
     }
 
     function cancel(uint256 id_)
