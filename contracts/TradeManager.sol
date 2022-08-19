@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 // Import this file to use console.log
 import "hardhat/console.sol";
+import "./AaveManager.sol";
 
 // manage txs for DCA:
 // deposit into aave for lending fees
