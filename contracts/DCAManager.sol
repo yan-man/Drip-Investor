@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // import "./libraries/DCAOptions.sol";
 import "./JobManager.sol";
+import "./TradeManager.sol";
 
 contract DCAManager is Ownable {
     // Type declarations
@@ -30,6 +31,7 @@ contract DCAManager is Ownable {
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
     JobManager private _s_jm;
+    TradeManager private _s_tm;
 
     // Events
     event LogContractAddrSet(uint256 id);
@@ -89,6 +91,8 @@ contract DCAManager is Ownable {
         s_contractsLookup[CoreContractId(id_)] = addr_;
         if (id_ == uint(CoreContractId.JOB_MANAGER)) {
             _s_jm = JobManager(addr_);
+        } else if (id_ == uint(CoreContractId.TRADE_MANAGER)) {
+            _s_tm = TradeManager(addr_);
         }
         bool _isInitialized = _checkContractInitializationStatus();
         if (_isInitialized) {
@@ -152,6 +156,7 @@ contract DCAManager is Ownable {
             investmentAmount_,
             options_
         ); // create DCA job
+        _result = _s_tm.deposit();
         s_userJobs[msg.sender][_jobId] = amount_;
 
         emit LogCreateJob(msg.sender, amount_);

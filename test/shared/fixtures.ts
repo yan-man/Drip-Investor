@@ -2,7 +2,12 @@ import { Fixture, MockContract } from "ethereum-waffle";
 import { ContractFactory, Wallet } from "ethers";
 import { ethers } from "hardhat";
 import { DCAManager, JobManager } from "../../typechain-types";
-import { deployMockUsdc, deployMockJobManager } from "./mocks";
+import {
+  deployMockUsdc,
+  deployMockJobManager,
+  deployMockAaveManager,
+  deployMockTradeManager,
+} from "./mocks";
 
 type UnitDCAManagerFixtureType = {
   dCAManager: DCAManager;
@@ -20,10 +25,11 @@ export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
 
   const mockUsdc = await deployMockUsdc(deployer);
   const mockJobManager = await deployMockJobManager(deployer);
-  const DCAOptions: ContractFactory = await ethers.getContractFactory(
-    `DCAOptions`
-  );
-  const dCAOptions = await DCAOptions.deploy();
+  const mockTradeManager = await deployMockTradeManager(deployer);
+  // const DCAOptions: ContractFactory = await ethers.getContractFactory(
+  //   `DCAOptions`
+  // );
+  // const dCAOptions = await DCAOptions.deploy();
   const DCAManagerFactory: ContractFactory = await ethers.getContractFactory(
     `DCAManager`
     // { libraries: { DCAOptions: dCAOptions.address } }
@@ -31,10 +37,9 @@ export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
   const dCAManager: DCAManager = (await DCAManagerFactory.connect(
     deployer
   ).deploy(mockUsdc.address)) as DCAManager;
-
   await dCAManager.deployed();
 
-  return { dCAManager, mockUsdc, mockJobManager };
+  return { dCAManager, mockUsdc, mockJobManager, mockTradeManager };
 };
 
 export const unitJobManagerFixture: Fixture<UnitJobManagerFixtureType> = async (

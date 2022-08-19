@@ -7,5 +7,18 @@ import "hardhat/console.sol";
 // connect to aave, execute txs for lending
 // caller: TradeManager
 contract AaveManager {
-
+    // Type declarations
+    // State variables
+    // Events
+    // Modifiers
+    // constructor
+    // Functions: view then pure
+    // External functions
+    // External functions that are view
+    // External functions that are pure
+    // Public functions
+    // Internal functions
+    // Private functions
+    // when DCA is actually executed, make sure to update deposit
+    // function executeSwap
 }

@@ -145,6 +145,9 @@ export const UnitTest = (): void => {
         await this.dCAManager
           .connect(this.signers[0])
           .setContractAddress(0, this.mocks.mockJobManager.address);
+        await this.dCAManager
+          .connect(this.signers[0])
+          .setContractAddress(2, this.mocks.mockTradeManager.address);
 
         // create DCA job
         const tx = await this.dCAManager
@@ -152,7 +155,7 @@ export const UnitTest = (): void => {
           .createDCAJob(_depositAmount, _depositAmount / 10, [0, 0]);
         await tx.wait();
 
-        // expect saved depsoit amount to match expected
+        // expect saved deposit amount to match expected
         expect(
           await this.dCAManager
             .connect(this.signers[0])
@@ -178,6 +181,9 @@ export const UnitTest = (): void => {
           await this.dCAManager
             .connect(this.signers[0])
             .setContractAddress(0, this.mocks.mockJobManager.address);
+          await this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(2, this.mocks.mockTradeManager.address);
 
           // create DCA job
           this._depositAmount = 100;
