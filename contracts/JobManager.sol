@@ -7,6 +7,7 @@ import "./libraries/DCAOptions.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "./libraries/DCAOptions.sol";
+import "./DCAManager.sol";
 
 // called by:
 // - KeepersManager
@@ -33,6 +34,7 @@ contract JobManager {
     // State variables
     mapping(uint256 => Job) public s_jobs; // jobId -> Job
     Counters.Counter private _jobIds; // 0-indexed
+    // DCAManager private _s_dcam;
 
     // Events
     event LogCreate(address owner_, uint256 amount_, uint256[] options_);
@@ -41,6 +43,7 @@ contract JobManager {
     error JobManager__InvalidOwner();
     error DCAOptions__InvalidOptions();
     error JobManager__InvalidAmount();
+    error JobManager__InvalidId(uint256 id);
 
     // Modifiers
     modifier validateOptions(uint256[] calldata options_) {
@@ -49,7 +52,7 @@ contract JobManager {
         }
         _;
     }
-    modifier validate(address owner_, uint256 amount_) {
+    modifier validateCreate(address owner_, uint256 amount_) {
         if (owner_ == address(0)) {
             revert JobManager__InvalidOwner();
         }
@@ -58,8 +61,18 @@ contract JobManager {
         }
         _;
     }
+    modifier validateCancel(uint256 id_) {
+        if (!isValidId(id_)) {
+            revert JobManager__InvalidId(id_);
+        }
+        _;
+    }
 
     // constructor
+
+    // constructor(address dCAManager_) {
+    //     _s_dcam = DCAManager(dCAManager_);
+    // }
 
     // Functions: view then pure
     // External functions
@@ -79,7 +92,7 @@ contract JobManager {
         uint256[] calldata options_
     )
         external
-        validate(owner_, amount_)
+        validateCreate(owner_, amount_)
         validateOptions(options_)
         returns (uint256 _jobId)
     {
@@ -103,12 +116,16 @@ contract JobManager {
     }
 
     function isValidId(uint256 id_) public view returns (bool _result) {
-        if (s_jobs[id_].startTime != 0) {
+        if (s_jobs[id_].startTime != 0 && s_jobs[id_].isActive) {
             _result = true;
         }
     }
 
-    function cancel(uint256 id) external returns (bool _result) {
+    function cancel(uint256 id_)
+        external
+        validateCancel(id_)
+        returns (bool _result)
+    {
         return true;
     }
     // erases Job of given jobId - set inactive

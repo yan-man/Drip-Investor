@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 export const UnitTest = (): void => {
-  describe("Deployment", function () {});
+  // describe("Deployment", function () {});
   describe("Create", function () {
     it("Should revert if options param array doesn't have at least 1 element", async function () {
       await expect(
@@ -69,6 +69,21 @@ export const UnitTest = (): void => {
         expect(_job.startTime).to.be.equal(await time.latest());
         expect(_job.initialBalance).to.be.equal(this._amount);
         expect(_job.investmentAmount).to.be.equal(this._investmentAmount);
+      });
+      describe("Cancel", function () {
+        it("Should revert if no active job exists", async function () {
+          await expect(this.jobManager.cancel(5)).to.be.reverted;
+        });
+
+        describe("Events", function () {
+          it("Should emit event during create", async function () {
+            await expect(
+              this.jobManager
+                .connect(this.signers[0])
+                .create(this.signers[2].address, 1000, 100, [0])
+            ).to.emit(this.jobManager, `LogCreate`);
+          });
+        });
       });
     });
 
