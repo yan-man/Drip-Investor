@@ -2,6 +2,7 @@ import { waffle, ethers } from "hardhat";
 import {
   unitDCAManagerFixture,
   unitJobManagerFixture,
+  unitTradeManagerFixture,
 } from "../shared/fixtures";
 import { Mocks, Signers } from "../shared/types";
 import { UnitTest as DCAManagerUnitTest } from "./DCAManager/DCAManager.spec";
@@ -34,15 +35,12 @@ describe(`Unit tests`, async () => {
     DCAManagerUnitTest();
   });
 
-  describe(`JobManager`, async () => {
+  describe(`TradeManager`, async () => {
     beforeEach(async function () {
-      const { jobManager } = await this.loadFixture(unitJobManagerFixture);
-
-      this.jobManager = jobManager;
+      const { tradeManager } = await this.loadFixture(unitTradeManagerFixture);
+      this.tradeManager = tradeManager;
       this.mocks = {} as Mocks;
-
-      // console.log(this.mocks.mockJobManager);
     });
-    JobManagerUnitTest();
+    TradeManagerUnitTest();
   });
 });
