@@ -1,7 +1,11 @@
 import { waffle, ethers } from "hardhat";
-import { unitDCAManagerFixture } from "../shared/fixtures";
+import {
+  unitDCAManagerFixture,
+  unitJobManagerFixture,
+} from "../shared/fixtures";
 import { Mocks, Signers } from "../shared/types";
-import { DCAUnitTest } from "./DCAManager/DCAManager.spec";
+import { UnitTest as DCAManagerUnitTest } from "./DCAManager/DCAManager.spec";
+import { UnitTest as JobManagerUnitTest } from "./JobManager/JobManager.spec";
 
 describe(`Unit tests`, async () => {
   before(async function () {
@@ -15,17 +19,29 @@ describe(`Unit tests`, async () => {
 
   describe(`DCAManager`, async () => {
     beforeEach(async function () {
-      const { dCAManager, mockUsdc, mockJobManager } = await this.loadFixture(
-        unitDCAManagerFixture
-      );
+      const { dCAManager, mockUsdc, mockJobManager, mockTradeManager } =
+        await this.loadFixture(unitDCAManagerFixture);
 
       this.dCAManager = dCAManager;
       this.mocks = {} as Mocks;
       this.mocks.mockUsdc = mockUsdc;
       this.mocks.mockJobManager = mockJobManager;
+      this.mocks.mockTradeManager = mockTradeManager;
 
       // console.log(this.mocks.mockJobManager);
     });
-    DCAUnitTest();
+    DCAManagerUnitTest();
+  });
+
+  describe(`JobManager`, async () => {
+    beforeEach(async function () {
+      const { jobManager } = await this.loadFixture(unitJobManagerFixture);
+
+      this.jobManager = jobManager;
+      this.mocks = {} as Mocks;
+
+      // console.log(this.mocks.mockJobManager);
+    });
+    JobManagerUnitTest();
   });
 });

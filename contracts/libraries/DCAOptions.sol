@@ -16,7 +16,13 @@ library DCAOptions {
         HOURS // SECONDS, DAYS, WEEKS, MONTHS, MINUTES
     }
 
-    function helptest() public view {
-        console.log("testme");
+    function validate(uint256[] calldata options_)
+        public
+        view
+        returns (bool _result)
+    {
+        if (options_.length > 0) {
+            _result = true;
+        }
     }
 }

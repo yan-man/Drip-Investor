@@ -7,7 +7,9 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.9",
+  solidity: {
+    compilers: [{ version: "0.8.9" }, { version: "0.6.12" }],
+  },
   networks: {
     ropsten: {
       url: process.env.ROPSTEN_URL || "",

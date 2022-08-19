@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // import "./libraries/DCAOptions.sol";
 import "./JobManager.sol";
+import "./TradeManager.sol";
 
 contract DCAManager is Ownable {
     // Type declarations
@@ -30,6 +31,7 @@ contract DCAManager is Ownable {
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
     JobManager private _s_jm;
+    TradeManager private _s_tm;
 
     // Events
     event LogContractAddrSet(uint256 id);
@@ -43,6 +45,7 @@ contract DCAManager is Ownable {
     error DCAManager__InvalidJobId(uint256 jobId);
     error DCAManager__InvalidJobCreator(address addr);
     error DCAManager__JobManager__Cancel();
+    error DCAManager__InvalidInvestment();
 
     // Modifiers
     modifier isInitialized() {
@@ -51,8 +54,8 @@ contract DCAManager is Ownable {
         }
         _;
     }
-    modifier hasFunds() {
-        if (IERC20(s_tokenAddr).balanceOf(msg.sender) == 0) {
+    modifier hasFunds(uint256 amount_) {
+        if (IERC20(s_tokenAddr).balanceOf(msg.sender) < amount_) {
             revert DCAManager__InsufficientFunds();
         }
         _;
@@ -60,6 +63,13 @@ contract DCAManager is Ownable {
     modifier isValidJobId(uint256 jobId_) {
         if (!_s_jm.isValidId(jobId_)) {
             revert DCAManager__InvalidJobId(jobId_);
+        }
+        _;
+    }
+    modifier validateInputs(uint256 amount_, uint256 investmentAmount_) {
+        // console.log("here validateInputs");
+        if (amount_ < investmentAmount_) {
+            revert DCAManager__InvalidInvestment();
         }
         _;
     }
@@ -81,6 +91,8 @@ contract DCAManager is Ownable {
         s_contractsLookup[CoreContractId(id_)] = addr_;
         if (id_ == uint(CoreContractId.JOB_MANAGER)) {
             _s_jm = JobManager(addr_);
+        } else if (id_ == uint(CoreContractId.TRADE_MANAGER)) {
+            _s_tm = TradeManager(addr_);
         }
         bool _isInitialized = _checkContractInitializationStatus();
         if (_isInitialized) {
@@ -117,10 +129,15 @@ contract DCAManager is Ownable {
      * @param options_ options flag array. See DCAOptions library
      * should return nothing, will be a tx
      */
-    function createDCAJob(uint256 amount_, uint256[] calldata options_)
+    function createDCAJob(
+        uint256 amount_,
+        uint256 investmentAmount_,
+        uint256[] calldata options_
+    )
         external
+        validateInputs(amount_, investmentAmount_)
         isInitialized
-        hasFunds
+        hasFunds(amount_)
     {
         bool _result = IERC20(s_tokenAddr).transferFrom(
             msg.sender,
@@ -133,7 +150,8 @@ contract DCAManager is Ownable {
         // add user token amount to existing deposit
         uint256 _deposit = s_deposits[msg.sender];
         s_deposits[msg.sender] = _deposit + amount_;
-        uint256 _jobId = _s_jm.create(msg.sender, options_); // create DCA job
+        uint256 _jobId = _s_jm.create(msg.sender, investmentAmount_, options_); // create DCA job
+        _result = _s_tm.deposit();
         s_userJobs[msg.sender][_jobId] = amount_;
 
         emit LogCreateJob(msg.sender, amount_);
@@ -148,11 +166,11 @@ contract DCAManager is Ownable {
             revert DCAManager__InvalidJobCreator(msg.sender);
         }
         uint256 _amount = s_userJobs[msg.sender][jobId_];
+        s_userJobs[msg.sender][jobId_] = 0;
         _result = _s_jm.cancel(jobId_);
         if (!_result) {
             revert DCAManager__JobManager__Cancel();
         }
-        s_userJobs[msg.sender][jobId_] = 0;
         _result = IERC20(s_tokenAddr).transferFrom(
             address(this),
             msg.sender,

@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 
 import { Mocks, Signers } from "../../shared/types";
 
-export const DCAUnitTest = (): void => {
+export const UnitTest = (): void => {
   describe("Deployment", function () {
     describe("State variables/Owner privileges", function () {
       it("Should set the right owner", async function () {
@@ -82,8 +82,9 @@ export const DCAUnitTest = (): void => {
 
   describe("Creating a DCA Job", function () {
     it("Should revert if attempt to create a DCA job but core contract values are not set", async function () {
-      await expect(this.dCAManager.connect(this.signers[0]).createDCAJob(100))
-        .to.be.reverted;
+      await expect(
+        this.dCAManager.connect(this.signers[0]).createDCAJob(100, 10, [0])
+      ).to.be.reverted;
     });
     describe("...after all core contracts initialized", function () {
       beforeEach(
@@ -101,28 +102,42 @@ export const DCAUnitTest = (): void => {
         await this.mocks.mockUsdc.mock.transferFrom.returns(true);
         await this.mocks.mockUsdc.mock.balanceOf.returns(0);
         await expect(
-          this.dCAManager.connect(this.signers[0]).createDCAJob(100, [1, 2])
+          this.dCAManager.connect(this.signers[0]).createDCAJob(100, 10, [1, 2])
         ).to.be.revertedWithCustomError(
           this.dCAManager,
           `DCAManager__InsufficientFunds`
         );
       });
       it("Should revert if user has funds but token transfer not approved first", async function () {
-        await this.mocks.mockUsdc.mock.balanceOf.returns(1);
+        await this.mocks.mockUsdc.mock.balanceOf.returns(100);
         await this.mocks.mockUsdc.mock.transferFrom.returns(false);
         await expect(
-          this.dCAManager.connect(this.signers[0]).createDCAJob(100, [1, 2])
+          this.dCAManager.connect(this.signers[0]).createDCAJob(100, 10, [1, 2])
         ).to.be.revertedWithCustomError(
           this.dCAManager,
           `DCAManager__TransferError`
         );
       });
+      it("Should revert if user has insufficient funds", async function () {
+        await this.mocks.mockUsdc.mock.transferFrom.returns(false);
+        await this.mocks.mockUsdc.mock.balanceOf.returns(100);
+
+        await expect(
+          this.dCAManager
+            .connect(this.signers[0])
+            .createDCAJob(100, 200, [1, 2])
+        ).to.be.revertedWithCustomError(
+          this.dCAManager,
+          `DCAManager__InvalidInvestment`
+        );
+      });
       // it("Should revert if invalid tokens are sent with request", async function () {});
       it("Should create DCA job if validation successful", async function () {
         const _mockJobId = 2;
+        const _depositAmount = 100;
 
         // set up mocks
-        await this.mocks.mockUsdc.mock.balanceOf.returns(1000);
+        await this.mocks.mockUsdc.mock.balanceOf.returns(_depositAmount);
         await this.mocks.mockUsdc.mock.transferFrom.returns(true);
         await this.mocks.mockJobManager.mock.create.returns(_mockJobId);
 
@@ -130,15 +145,17 @@ export const DCAUnitTest = (): void => {
         await this.dCAManager
           .connect(this.signers[0])
           .setContractAddress(0, this.mocks.mockJobManager.address);
+        await this.dCAManager
+          .connect(this.signers[0])
+          .setContractAddress(2, this.mocks.mockTradeManager.address);
 
         // create DCA job
-        const _depositAmount = 100;
         const tx = await this.dCAManager
           .connect(this.signers[0])
-          .createDCAJob(_depositAmount, [0, 0]);
+          .createDCAJob(_depositAmount, _depositAmount / 10, [0, 0]);
         await tx.wait();
 
-        // expect saved depsoit amount to match expected
+        // expect saved deposit amount to match expected
         expect(
           await this.dCAManager
             .connect(this.signers[0])
@@ -164,12 +181,19 @@ export const DCAUnitTest = (): void => {
           await this.dCAManager
             .connect(this.signers[0])
             .setContractAddress(0, this.mocks.mockJobManager.address);
+          await this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(2, this.mocks.mockTradeManager.address);
 
           // create DCA job
           this._depositAmount = 100;
           const tx = await this.dCAManager
             .connect(this.signers[1])
-            .createDCAJob(this._depositAmount, [0, 0]);
+            .createDCAJob(
+              this._depositAmount,
+              this._depositAmount / 10,
+              [0, 0]
+            );
           await tx.wait();
         });
         it("Should add to existing deposit amount if 2nd job created", async function () {
@@ -178,7 +202,7 @@ export const DCAUnitTest = (): void => {
           await this.mocks.mockJobManager.mock.create.returns(_mockJobId);
           const tx = await this.dCAManager
             .connect(this.signers[1])
-            .createDCAJob(_depositAmount, [0, 0]);
+            .createDCAJob(_depositAmount, this._depositAmount / 10, [0, 0]);
           await tx.wait();
           expect(
             await this.dCAManager.s_userJobs(
@@ -212,11 +236,21 @@ export const DCAUnitTest = (): void => {
         });
         it("Should throw if cancellation attempted for invalid id", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(false);
-          await expect(this.dCAManager.cancelJob(0)).to.be.reverted;
+          await expect(
+            this.dCAManager.cancelJob(0)
+          ).to.be.revertedWithCustomError(
+            this.dCAManager,
+            `DCAManager__InvalidJobId`
+          );
         });
         it("Should throw if cancellation attempted by non owner", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(true);
-          await expect(this.dCAManager.cancelJob(0)).to.be.reverted;
+          await expect(
+            this.dCAManager.cancelJob(0)
+          ).to.be.revertedWithCustomError(
+            this.dCAManager,
+            `DCAManager__InvalidJobCreator`
+          );
         });
         describe("Events", function () {
           it("Should emit when job is cancelled", async function () {
@@ -232,7 +266,7 @@ export const DCAUnitTest = (): void => {
               .withArgs(this._mockJobId);
           });
         });
-        // it("", async function () {});
+
         // it("", async function () {});
       });
       describe("Events", function () {
@@ -246,11 +280,14 @@ export const DCAUnitTest = (): void => {
           await this.dCAManager
             .connect(this.signers[0])
             .setContractAddress(0, this.mocks.mockJobManager.address);
+          await this.dCAManager
+            .connect(this.signers[0])
+            .setContractAddress(2, this.mocks.mockTradeManager.address);
           const _depositAmount = 100;
           await expect(
             this.dCAManager
               .connect(this.signers[0])
-              .createDCAJob(_depositAmount, [0, 0])
+              .createDCAJob(_depositAmount, _depositAmount / 10, [0, 0])
           )
             .to.emit(this.dCAManager, `LogCreateJob`)
             .withArgs(this.signers[0].address, _depositAmount);
