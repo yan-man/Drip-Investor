@@ -62,7 +62,6 @@ export const UnitTest = (): void => {
     });
     describe("...after job1 created", function () {
       beforeEach(`...create job1`, async function () {
-        this._amount = 1000;
         this._investmentAmount = 100;
         await this.jobManager
           .connect(this.signers[0])
@@ -89,6 +88,7 @@ export const UnitTest = (): void => {
         expect(_jobIds).to.be.an("array");
         expect(_jobIds.length).to.be.equal(1);
         expect(jobIdsValues).to.be.an("array").that.includes(0);
+        expect(await this.jobManager.isValidId(0)).to.be.equal(true);
       });
       describe("...after job2 created", function () {
         beforeEach(`...create job2`, async function () {
@@ -106,6 +106,7 @@ export const UnitTest = (): void => {
           expect(_jobIds).to.be.an("array");
           expect(_jobIds.length).to.be.equal(2);
           expect(jobIdsValues).to.be.an("array").that.includes(1);
+          expect(await this.jobManager.isValidId(1)).to.be.equal(true);
         });
         it("Should have updated s_jobs var after create2", async function () {
           const _job = await this.jobManager.s_jobs(1);
