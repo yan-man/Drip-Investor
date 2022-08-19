@@ -6,6 +6,7 @@ import {
 import { Mocks, Signers } from "../shared/types";
 import { UnitTest as DCAManagerUnitTest } from "./DCAManager/DCAManager.spec";
 import { UnitTest as JobManagerUnitTest } from "./JobManager/JobManager.spec";
+import { UnitTest as TradeManagerUnitTest } from "./TradeManager/TradeManager.spec";
 
 describe(`Unit tests`, async () => {
   before(async function () {
