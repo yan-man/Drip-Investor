@@ -43,7 +43,6 @@ export const UnitTest = (): void => {
           .connect(this.signers[0])
           .create(this.signers[1].address, _amount, _investmentAmount, [0])
       ).to.not.be.reverted;
-      expect(await this.jobManager.getCurrentId()).to.be.equal(1);
     });
     describe("...after job1 created", function () {
       beforeEach(`...create job1`, async function () {
@@ -58,7 +57,9 @@ export const UnitTest = (): void => {
             [0]
           );
       });
-      it("Should have updated jobIds counter after create", async function () {});
+      it("Should have updated jobIds counter after create", async function () {
+        expect(await this.jobManager.getCurrentId()).to.be.equal(1);
+      });
       it("Should have updated s_jobs var after create", async function () {
         const _job = await this.jobManager.s_jobs(0);
         expect(_job.id).to.be.equal(0);
