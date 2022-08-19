@@ -127,6 +127,7 @@ export const UnitTest = (): void => {
           const _job = await this.jobManager.s_jobs(0);
           expect(_job.isActive).to.be.equal(false);
           expect(await this.jobManager._s_numActiveJobs()).to.be.equal(0);
+          expect(await this.jobManager.isValidId(0)).to.be.equal(false);
         });
 
         describe("Events", function () {
