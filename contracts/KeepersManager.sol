@@ -31,7 +31,7 @@ contract KeepersManager is KeeperCompatibleInterface {
     // Internal functions
     // Private functions
 
-    JobManager private _s_jm;
+    address private _s_jmAddr;
 
     function checkUpkeep(bytes calldata checkData_)
         external
@@ -39,6 +39,11 @@ contract KeepersManager is KeeperCompatibleInterface {
         override
         returns (bool upkeepNeeded, bytes memory performData)
     {
+        require(_s_jmAddr != address(0), "JobManager not set");
+
+        JobManager _jm = JobManager(_s_jmAddr);
+        uint256[] memory _result = _jm.getActiveJobIds();
+        console.log("here");
         // upkeepNeeded = (block.timestamp - lastTimeStamp) > interval;
         // We don't use the checkData in this example. The checkData is defined when the Upkeep was registered.
         upkeepNeeded = true;
@@ -56,6 +61,6 @@ contract KeepersManager is KeeperCompatibleInterface {
     }
 
     function setJobManager(address addr_) external {
-        _s_jm = JobManager(addr_);
+        _s_jmAddr = addr_;
     }
 }

@@ -4,9 +4,11 @@ import { ethers } from "hardhat";
 
 export const UnitTest = (): void => {
   describe("Deployment", function () {
-    // it("Should set the right owner", async function () {
-    //   // expect(await this.dCAManager.owner()).to.equal(this.signers[0].address);
-    // });
+    it("Should revert if checkUpkeep attempted prior to initializing JobManager", async function () {
+      await expect(
+        this.keepersManager.checkUpkeep(ethers.utils.formatBytes32String(""))
+      ).to.be.revertedWith("JobManager not set");
+    });
     it("Should set JobManager address", async function () {
       await expect(this.keepersManager.setJobManager(this.signers[1].address))
         .to.not.be.reverted;
