@@ -31,7 +31,8 @@ export const deployMockJobManager = async (
     JobManager_ABI.abi
   );
   await jobManager.mock.create.returns(1);
-
+  await jobManager.mock.getActiveJobIds.returns([0, 2]);
+  await jobManager.mock.isActiveJobs.returns(true);
   return jobManager;
 };
 

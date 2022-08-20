@@ -60,11 +60,12 @@ describe(`Unit tests`, async () => {
 
   describe(`KeepersManager`, async () => {
     beforeEach(async function () {
-      const { keepersManager } = await this.loadFixture(
+      const { keepersManager, mockJobManager } = await this.loadFixture(
         unitKeepersManagerFixture
       );
       this.keepersManager = keepersManager;
       this.mocks = {} as Mocks;
+      this.mocks.mockJobManager = mockJobManager;
     });
     KeepersManagerUnitTest();
   });

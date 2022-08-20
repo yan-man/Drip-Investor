@@ -42,11 +42,10 @@ contract KeepersManager is KeeperCompatibleInterface {
         require(_s_jmAddr != address(0), "JobManager not set");
 
         JobManager _jm = JobManager(_s_jmAddr);
-        uint256[] memory _result = _jm.getActiveJobIds();
-        console.log("here");
-        // upkeepNeeded = (block.timestamp - lastTimeStamp) > interval;
-        // We don't use the checkData in this example. The checkData is defined when the Upkeep was registered.
-        upkeepNeeded = true;
+        bool _isActiveJobs = _jm.isActiveJobs();
+        if (_isActiveJobs) {
+            upkeepNeeded = true;
+        }
     }
 
     function performUpkeep(

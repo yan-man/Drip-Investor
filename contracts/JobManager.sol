@@ -113,6 +113,19 @@ contract JobManager {
         }
     }
 
+    function isActiveJobs() external view returns (bool _isActive) {
+        uint256 _idx;
+        uint256 _maxId = _jobIds.current();
+        while (_idx < _maxId) {
+            Job memory _job = s_jobs[_idx];
+            if (_job.startTime != 0 && _job.isActive) {
+                _isActive = true;
+                break;
+            }
+            _idx++;
+        }
+    }
+
     // external, only called by DCAManager
     // should save a new job and show active or not
     // return newly saved id

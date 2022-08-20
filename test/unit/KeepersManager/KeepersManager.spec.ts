@@ -3,19 +3,41 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 export const UnitTest = (): void => {
-  describe("Deployment", function () {
-    it("Should revert if checkUpkeep attempted prior to initializing JobManager", async function () {
-      await expect(
-        this.keepersManager.checkUpkeep(ethers.utils.formatBytes32String(""))
-      ).to.be.revertedWith("JobManager not set");
-    });
-    it("Should set JobManager address", async function () {
-      await expect(this.keepersManager.setJobManager(this.signers[1].address))
-        .to.not.be.reverted;
-    });
-    // it("Should set the right owner", async function () {});
-    // it("Should set the right owner", async function () {});
-    // it("Should set the right owner", async function () {});
-    // it("Should set the right owner", async function () {});
+  it("Should revert if checkUpkeep attempted prior to initializing JobManager", async function () {
+    await expect(
+      this.keepersManager.checkUpkeep(ethers.utils.formatBytes32String(""))
+    ).to.be.revertedWith("JobManager not set");
   });
+  it("Should set JobManager address", async function () {
+    await expect(
+      this.keepersManager.setJobManager(this.mocks.mockJobManager.address)
+    ).to.not.be.reverted;
+  });
+  describe("Deployment", function () {
+    beforeEach(`...set mock contract address`, async function () {
+      await this.keepersManager.setJobManager(
+        this.mocks.mockJobManager.address
+      );
+    });
+    it("Should return based on whether an active job exists", async function () {
+      await this.mocks.mockJobManager.mock.isActiveJobs.returns(true);
+      const [_upkeepNeeded, _performData] =
+        await this.keepersManager.checkUpkeep(
+          ethers.utils.formatBytes32String("")
+        );
+      expect(_upkeepNeeded).to.be.equals(true);
+    });
+    it("Should return based on whether an active job exists", async function () {
+      await this.mocks.mockJobManager.mock.isActiveJobs.returns(false);
+      const [_upkeepNeeded, _performData] =
+        await this.keepersManager.checkUpkeep(
+          ethers.utils.formatBytes32String("")
+        );
+      expect(_upkeepNeeded).to.be.equals(false);
+    });
+  });
+  // it("Should set the right owner", async function () {});
+  // it("Should set the right owner", async function () {});
+  // it("Should set the right owner", async function () {});
+  // it("Should set the right owner", async function () {});
 };
