@@ -55,6 +55,7 @@ export const deployMockTradeManager = async (
     TradeManager_ABI.abi
   );
   await tradeManager.mock.deposit.returns(true);
+  await tradeManager.mock.swap.returns(true);
 
   return tradeManager;
 };

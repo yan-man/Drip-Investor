@@ -46,6 +46,11 @@ export const UnitTest = (): void => {
         );
       expect(_upkeepNeeded).to.be.equals(false);
     });
+    it("Should performUpkeep", async function () {
+      await expect(
+        this.keepersManager.performUpkeep(ethers.utils.formatBytes32String(""))
+      ).to.be.not.reverted;
+    });
   });
   // it("Should set the right owner", async function () {});
   // it("Should set the right owner", async function () {});
