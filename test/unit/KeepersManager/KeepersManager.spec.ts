@@ -6,17 +6,28 @@ export const UnitTest = (): void => {
   it("Should revert if checkUpkeep attempted prior to initializing JobManager", async function () {
     await expect(
       this.keepersManager.checkUpkeep(ethers.utils.formatBytes32String(""))
-    ).to.be.revertedWith("JobManager not set");
+    ).to.be.revertedWithCustomError(
+      this.keepersManager,
+      `KeepersManager__NotInitialized`
+    );
   });
   it("Should set JobManager address", async function () {
     await expect(
       this.keepersManager.setJobManager(this.mocks.mockJobManager.address)
     ).to.not.be.reverted;
   });
+  it("Should set TradeManager address", async function () {
+    await expect(
+      this.keepersManager.setTradeManager(this.mocks.mockTradeManager.address)
+    ).to.not.be.reverted;
+  });
   describe("Deployment", function () {
     beforeEach(`...set mock contract address`, async function () {
       await this.keepersManager.setJobManager(
         this.mocks.mockJobManager.address
+      );
+      await this.keepersManager.setTradeManager(
+        this.mocks.mockTradeManager.address
       );
     });
     it("Should return based on whether an active job exists", async function () {

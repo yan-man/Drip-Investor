@@ -32,6 +32,7 @@ type UnitTradeManagerFixtureType = {
 type UnitKeepersManagerFixtureType = {
   keepersManager: KeepersManager;
   mockJobManager: MockContract;
+  mockTradeManager: MockContract;
 };
 
 export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
@@ -104,6 +105,7 @@ export const unitKeepersManagerFixture: Fixture<
   const deployer: Wallet = signers[0];
 
   const mockJobManager = await deployMockJobManager(deployer);
+  const mockTradeManager = await deployMockTradeManager(deployer);
   const KeepersManagerFactory: ContractFactory =
     await ethers.getContractFactory(`KeepersManager`);
   const keepersManager: KeepersManager = (await KeepersManagerFactory.connect(
@@ -112,5 +114,5 @@ export const unitKeepersManagerFixture: Fixture<
 
   await keepersManager.deployed();
 
-  return { keepersManager, mockJobManager };
+  return { keepersManager, mockJobManager, mockTradeManager };
 };

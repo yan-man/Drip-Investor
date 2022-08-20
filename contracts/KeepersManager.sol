@@ -32,11 +32,22 @@ contract KeepersManager is KeeperCompatibleInterface {
     // Private functions
 
     address private _s_jmAddr;
+    address private _s_tmAddr;
+
+    error KeepersManager__NotInitialized();
+
+    modifier isInitialized() {
+        if (_s_jmAddr == address(0) || _s_tmAddr == address(0)) {
+            revert KeepersManager__NotInitialized();
+        }
+        _;
+    }
 
     function checkUpkeep(bytes calldata checkData_)
         external
         view
         override
+        isInitialized
         returns (bool upkeepNeeded, bytes memory performData)
     {
         require(_s_jmAddr != address(0), "JobManager not set");
@@ -61,5 +72,9 @@ contract KeepersManager is KeeperCompatibleInterface {
 
     function setJobManager(address addr_) external {
         _s_jmAddr = addr_;
+    }
+
+    function setTradeManager(address addr_) external {
+        _s_tmAddr = addr_;
     }
 }
