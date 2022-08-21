@@ -59,8 +59,12 @@ export const UnitTest = (): void => {
           );
           await expect(this.tradeManager.deposit(0)).to.be.not.reverted;
         });
+        describe(`Events`, async function () {
+          it("Should emit on successful deposit", async function () {});
+        });
       });
-      describe(`Swaps`, async function () {
+
+      describe(`Execute DCA via swap`, async function () {
         it("Should not allow swap for invalid Id", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(false);
           await expect(
@@ -81,6 +85,9 @@ export const UnitTest = (): void => {
             ethers.BigNumber.from("100")
           );
           await expect(this.tradeManager.executeJob(0)).to.be.not.reverted;
+        });
+        describe(`Events`, async function () {
+          it("Should emit on successful executedJob", async function () {});
         });
       });
     });
