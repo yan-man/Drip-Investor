@@ -63,7 +63,7 @@ describe(`Unit tests`, async () => {
       this.mocks.mockJobManager = mockJobManager;
       this.mocks.mockLendingManager = mockLendingManager;
       this.mocks.mockDEXManager = mockDEXManager;
-      this.mocks.mockDCAManager = mockDEXManager;
+      this.mocks.mockDCAManager = mockDCAManager;
     });
     TradeManagerUnitTest();
   });

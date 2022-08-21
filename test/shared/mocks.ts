@@ -1,6 +1,6 @@
 import { MockContract } from "ethereum-waffle";
 import { Signer } from "ethers";
-import { waffle } from "hardhat";
+import { waffle, ethers } from "hardhat";
 // import { Artifact } from "hardhat/types";
 import ERC_20_ABI from "../../abis/erc20.abi.json";
 import JobManager_ABI from "../../artifacts/contracts/JobManager.sol/JobManager.json";
@@ -35,6 +35,14 @@ export const deployMockJobManager = async (
   await jobManager.mock.create.returns(1);
   await jobManager.mock.getActiveJobIds.returns([0, 2]);
   await jobManager.mock.isActiveJobs.returns(true);
+  await jobManager.mock.s_jobs.returns(
+    ethers.BigNumber.from("0"),
+    jobManager.address,
+    ethers.BigNumber.from("0"),
+    true,
+    ethers.BigNumber.from("1661074126"),
+    ethers.BigNumber.from("100")
+  );
   return jobManager;
 };
 
@@ -84,6 +92,6 @@ export const deployMockDCAManager = async (
     DCAManager_ABI.abi
   );
 
-  // await dCAManager.mock.swap.returns(0);
+  await dCAManager.mock.reduceDeposit.returns(true);
   return dCAManager;
 };

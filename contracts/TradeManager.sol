@@ -131,12 +131,13 @@ contract TradeManager {
 
         // 2) swap in Uniswap
         // a) call swap from DEXmanager, need to supply given addersses of tokens swap to and from
-
-        // 3) update deposit/job amt in DCAManager
-        // a) call DCAManager
         uint256 _amountSwapped = _s_DEXManager.swap(owner, investmentAmount);
         if (_amountSwapped > 0) {
             _result = true;
         }
+
+        // 3) update deposit/job amt in DCAManager
+        // a) call DCAManager
+        _s_DCAManager.reduceDeposit(jobId_, owner, _amountSwapped);
     }
 }
