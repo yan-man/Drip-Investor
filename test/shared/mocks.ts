@@ -2,12 +2,12 @@ import { MockContract } from "ethereum-waffle";
 import { Signer } from "ethers";
 import { waffle } from "hardhat";
 // import { Artifact } from "hardhat/types";
-console.log(__dirname);
 import ERC_20_ABI from "../../abis/erc20.abi.json";
 import JobManager_ABI from "../../artifacts/contracts/JobManager.sol/JobManager.json";
 import DEXManager_ABI from "../../artifacts/contracts/DEXManager.sol/DEXManager.json";
 import LendingManager_ABI from "../../artifacts/contracts/LendingManager.sol/LendingManager.json";
 import TradeManager_ABI from "../../artifacts/contracts/TradeManager.sol/TradeManager.json";
+import DCAManager_ABI from "../../artifacts/contracts/DCAManager.sol/DCAManager.json";
 
 export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   //   const erc20Artifact: Artifact = await artifacts.readArtifact("ERC20");
@@ -74,4 +74,16 @@ export const deployMockDEXManager = async (
 
   await dEXManager.mock.swap.returns(0);
   return dEXManager;
+};
+
+export const deployMockDCAManager = async (
+  deployer: Signer
+): Promise<MockContract> => {
+  const dCAManager: MockContract = await waffle.deployMockContract(
+    deployer,
+    DCAManager_ABI.abi
+  );
+
+  // await dCAManager.mock.swap.returns(0);
+  return dCAManager;
 };

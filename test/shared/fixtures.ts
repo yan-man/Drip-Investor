@@ -13,6 +13,7 @@ import {
   deployMockLendingManager,
   deployMockTradeManager,
   deployMockDEXManager,
+  deployMockDCAManager,
 } from "./mocks";
 
 type UnitDCAManagerFixtureType = {
@@ -31,6 +32,7 @@ type UnitTradeManagerFixtureType = {
   mockDEXManager: MockContract;
   mockLendingManager: MockContract;
   mockJobManager: MockContract;
+  mockDCAManager: MockContract;
 };
 
 type UnitKeepersManagerFixtureType = {
@@ -94,6 +96,7 @@ export const unitTradeManagerFixture: Fixture<
   const mockJobManager = await deployMockJobManager(deployer);
   const mockLendingManager = await deployMockLendingManager(deployer);
   const mockDEXManager = await deployMockDEXManager(deployer);
+  const mockDCAManager = await deployMockDCAManager(deployer);
   const TradeManagerFactory: ContractFactory = await ethers.getContractFactory(
     `TradeManager`
   );
@@ -103,7 +106,13 @@ export const unitTradeManagerFixture: Fixture<
 
   await tradeManager.deployed();
 
-  return { tradeManager, mockJobManager, mockLendingManager, mockDEXManager };
+  return {
+    tradeManager,
+    mockJobManager,
+    mockLendingManager,
+    mockDEXManager,
+    mockDCAManager,
+  };
 };
 
 export const unitKeepersManagerFixture: Fixture<

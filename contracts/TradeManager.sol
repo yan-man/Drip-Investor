@@ -33,7 +33,8 @@ contract TradeManager {
     event LogContractsSet(
         address lenderAddr,
         address DEXAddr,
-        address jobManagerAddr
+        address jobManagerAddr,
+        address DCAManagerAddr
     );
 
     error TradeManager__NotInitialized();
@@ -44,7 +45,8 @@ contract TradeManager {
         if (
             address(_s_LendingManager) == address(0) ||
             address(_s_DEXManager) == address(0) ||
-            address(_s_JobManager) == address(0)
+            address(_s_JobManager) == address(0) ||
+            address(_s_DCAManager) == address(0)
         ) {
             revert TradeManager__NotInitialized();
         }
@@ -72,13 +74,20 @@ contract TradeManager {
     function setTradingContractAddresses(
         address lenderAddr_,
         address DEXAddr_,
-        address jobManagerAddr_
+        address jobManagerAddr_,
+        address DCAManagerAddr_
     ) public {
         _s_DEXManager = DEXManager(DEXAddr_);
         _s_LendingManager = LendingManager(lenderAddr_);
         _s_JobManager = JobManager(jobManagerAddr_);
+        _s_DCAManager = DCAManager(DCAManagerAddr_);
 
-        emit LogContractsSet(DEXAddr_, lenderAddr_, jobManagerAddr_);
+        emit LogContractsSet(
+            DEXAddr_,
+            lenderAddr_,
+            jobManagerAddr_,
+            DCAManagerAddr_
+        );
     }
 
     // deposit into Aave

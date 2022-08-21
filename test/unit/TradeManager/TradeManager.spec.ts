@@ -9,7 +9,8 @@ export const UnitTest = (): void => {
         this.tradeManager.setTradingContractAddresses(
           this.mocks.mockLendingManager.address,
           this.mocks.mockDEXManager.address,
-          this.mocks.mockJobManager.address
+          this.mocks.mockJobManager.address,
+          this.mocks.mockDCAManager.address
         )
       ).to.be.not.reverted;
     });
@@ -32,7 +33,8 @@ export const UnitTest = (): void => {
         await this.tradeManager.setTradingContractAddresses(
           this.mocks.mockLendingManager.address,
           this.mocks.mockDEXManager.address,
-          this.mocks.mockJobManager.address
+          this.mocks.mockJobManager.address,
+          this.mocks.mockDCAManager.address
         );
       });
       describe(`Deposits`, async function () {
