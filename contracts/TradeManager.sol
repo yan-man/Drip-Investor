@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 // Import this file to use console.log
 import "hardhat/console.sol";
+import "./libraries/Jobs.sol";
 import "./DEXManager.sol";
 import "./LendingManager.sol";
 import "./JobManager.sol";
@@ -33,6 +34,7 @@ contract TradeManager {
     );
 
     error TradeManager__NotInitialized();
+    error TradeManager__InvalidId(uint256 jobId);
 
     // Modifiers
     modifier isInitialized() {
@@ -74,9 +76,18 @@ contract TradeManager {
         isInitialized
         returns (bool _result)
     {
-        _result = true;
+        // get job from jobmanager
+        // _result = _s_LendingManager.deposit;
         // call aave manager, to deposit
         // set onBehalfOf to user
+        bool _isValidId = _s_JobManager.isValidId(jobId_);
+        if (!_isValidId) {
+            revert TradeManager__InvalidId(jobId_);
+        }
+        (, address owner, , , , uint256 investmentAmount) = _s_JobManager
+            .s_jobs(jobId_);
+
+        _result = _s_LendingManager.deposit(owner, investmentAmount);
     }
 
     function swap(uint256 jobId_) public isInitialized returns (bool _result) {

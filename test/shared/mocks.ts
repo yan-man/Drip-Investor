@@ -2,6 +2,7 @@ import { MockContract } from "ethereum-waffle";
 import { Signer } from "ethers";
 import { waffle } from "hardhat";
 // import { Artifact } from "hardhat/types";
+console.log(__dirname);
 import ERC_20_ABI from "../../abis/erc20.abi.json";
 import JobManager_ABI from "../../artifacts/contracts/JobManager.sol/JobManager.json";
 import DEXManager_ABI from "../../artifacts/contracts/DEXManager.sol/DEXManager.json";
@@ -57,6 +58,7 @@ export const deployMockLendingManager = async (
     deployer,
     LendingManager_ABI.abi
   );
+  await lendingManager.mock.deposit.returns(true);
 
   return lendingManager;
 };

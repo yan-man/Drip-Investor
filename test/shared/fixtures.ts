@@ -6,7 +6,7 @@ import {
   JobManager,
   TradeManager,
   KeepersManager,
-} from "../../typechain-types";
+} from "../../typechain-types/contracts/";
 import {
   deployMockUsdc,
   deployMockJobManager,
