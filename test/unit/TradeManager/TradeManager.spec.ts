@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 
 export const UnitTest = (): void => {
   describe("Initialization", function () {
-    it.only("Should allow setting core contract addresses", async function () {
+    it("Should allow setting core contract addresses", async function () {
       await expect(
         this.tradeManager.setTradingContractAddresses(
           this.mocks.mockLendingManager.address,
@@ -14,8 +14,9 @@ export const UnitTest = (): void => {
       ).to.be.not.reverted;
     });
     it("Should revert deposit if not yet initialized", async function () {
-      expect(await this.tradeManager.setTradingContractAddresses()).to.equal(
-        this.signers[0].address
+      await expect(this.tradeManager.deposit(0)).to.be.revertedWithCustomError(
+        this.tradeManager,
+        `TradeManager__NotInitialized`
       );
     });
     it("Should revert swap if not yet initialized", async function () {
