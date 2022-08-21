@@ -69,8 +69,8 @@ contract LendingManager {
         uint256 _amount = investmentAmount_ * 1e18;
         uint16 _referral = 0;
 
-        // // Approve LendingPool contract to move your DAI
-        IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
+        // // // Approve LendingPool contract to move your DAI
+        // IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
 
         // // Deposit 1000 DAI
         s_lendingPool.deposit(
