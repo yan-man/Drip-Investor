@@ -79,7 +79,7 @@ contract TradeManager {
         // set onBehalfOf to user
     }
 
-    function swap(uint256 jobId_) public returns (bool _result) {
+    function swap(uint256 jobId_) public isInitialized returns (bool _result) {
         // pull some amount out of aave and swap using uniswap
         // amount of aave is governed by job details - investmentAmount
         // need to check if users balanceOf is > investmentAmount
