@@ -119,11 +119,6 @@ contract DCAManager is Ownable {
         }
     }
 
-    // // Should receive tokens successfully before calling DCAOptions validation / Job Manager
-    // function deposit(uint _amount) public payable {
-    //     // IERC20(token).transferFrom(msg.sender, address(this), _amount);
-    // }
-
     /**
      * @param amount_ amount of token that is
      * @param options_ options flag array. See DCAOptions library
@@ -186,5 +181,10 @@ contract DCAManager is Ownable {
             _amount
         );
         emit LogCancelJob(jobId_);
+    }
+
+    // after DCA is done, reduce the deposit amt owed to user
+    function reduceDeposit() external returns (bool _result) {
+        _result = true;
     }
 }
