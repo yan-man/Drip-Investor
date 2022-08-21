@@ -15,6 +15,7 @@ contract LendingManager {
     address public s_depositTokenAddress; //USDC
     ILendingPool public s_lendingPool;
     ILendingPoolAddressesProvider public s_provider; // 0x5343b5bA672Ae99d627A1C87866b8E53F47Db2E6 for polygon mumbai
+    mapping(address => uint256) public s_deposits; // user addr -> num tokens deposited
 
     // Events
     event LogDeposit();
@@ -60,26 +61,44 @@ contract LendingManager {
     }
 
     // when DCA is actually executed, make sure to update deposit
-    function deposit(address investor_, uint256 investmentAmount_)
+    function deposit(address onBehalfOf_, uint256 investmentAmount_)
         public
         isInitialized
         returns (bool)
     {
-        uint256 amount = investmentAmount_ * 1e18;
-        uint16 referral = 0;
+        uint256 _amount = investmentAmount_ * 1e18;
+        uint16 _referral = 0;
 
         // // Approve LendingPool contract to move your DAI
-        // IERC20(daiAddress).approve(provider.getLendingPoolCore(), amount);
+        IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
 
         // // Deposit 1000 DAI
         s_lendingPool.deposit(
             s_depositTokenAddress,
-            amount,
-            investor_,
-            referral
+            _amount,
+            onBehalfOf_,
+            _referral
         );
 
         emit LogDeposit();
         return true;
+    }
+
+    function withdraw(address to_, uint256 withdrawalAmount_)
+        public
+        isInitialized
+        returns (bool _result)
+    {
+        uint256 _amount = withdrawalAmount_ * 1e18;
+
+        // Deposit 1000 DAI
+        s_lendingPool.withdraw(
+            s_depositTokenAddress,
+            _amount,
+            to_ // maybe send straight to DEXManager
+        );
+
+        emit LogDeposit();
+        _result = true;
     }
 }

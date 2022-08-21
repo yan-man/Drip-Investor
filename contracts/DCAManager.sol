@@ -26,7 +26,7 @@ contract DCAManager is Ownable {
 
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
-    mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
+    // mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
     mapping(address => mapping(uint256 => uint256)) public s_userJobs; // user address -> (job id -> num tokens deposited)
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
@@ -148,8 +148,8 @@ contract DCAManager is Ownable {
             revert DCAManager__TransferError();
         }
         // add user token amount to existing deposit
-        uint256 _deposit = s_deposits[msg.sender];
-        s_deposits[msg.sender] = _deposit + amount_;
+        // uint256 _deposit = s_deposits[msg.sender];
+        // s_deposits[msg.sender] = _deposit + amount_;
         uint256 _jobId = _s_jm.create(msg.sender, investmentAmount_, options_); // create DCA job
         _result = _s_tm.deposit(_jobId);
         s_userJobs[msg.sender][_jobId] = amount_;

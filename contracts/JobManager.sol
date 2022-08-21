@@ -17,18 +17,6 @@ import "./DCAManager.sol";
 contract JobManager {
     using Counters for Counters.Counter;
 
-    // Type declarations
-    // save DCA jobs, mapping? job id -> Job struct
-    // struct Job {
-    //     uint256 id;
-    //     address owner;
-    //     uint256 frequencyOptionId;
-    //     bool isActive;
-    //     uint256 startTime;
-    //     uint256 investmentAmount;
-    //     // should have something like initialBalance
-    // }
-
     // State variables
     mapping(uint256 => Jobs.Job) public s_jobs; // jobId -> Job
     Counters.Counter private _jobIds; // 0-indexed

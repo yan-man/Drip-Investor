@@ -48,6 +48,14 @@ contract TradeManager {
         _;
     }
 
+    modifier isValidJobId(uint256 jobId_) {
+        bool _isValidId = _s_JobManager.isValidId(jobId_);
+        if (!_isValidId) {
+            revert TradeManager__InvalidId(jobId_);
+        }
+        _;
+    }
+
     // constructor
     // Functions: view then pure
     // External functions
@@ -74,30 +82,43 @@ contract TradeManager {
     function deposit(uint256 jobId_)
         public
         isInitialized
+        isValidJobId(jobId_)
         returns (bool _result)
     {
         // get job from jobmanager
         // _result = _s_LendingManager.deposit;
         // call aave manager, to deposit
         // set onBehalfOf to user
-        bool _isValidId = _s_JobManager.isValidId(jobId_);
-        if (!_isValidId) {
-            revert TradeManager__InvalidId(jobId_);
-        }
+
         (, address owner, , , , uint256 investmentAmount) = _s_JobManager
             .s_jobs(jobId_);
 
         _result = _s_LendingManager.deposit(owner, investmentAmount);
     }
 
-    function swap(uint256 jobId_) public isInitialized returns (bool _result) {
+    function swap(uint256 jobId_)
+        public
+        isInitialized
+        isValidJobId(jobId_)
+        returns (bool _result)
+    {
         // pull some amount out of aave and swap using uniswap
         // amount of aave is governed by job details - investmentAmount
         // need to check if users balanceOf is > investmentAmount
         // set teh recipient to user's address
-        _result = true;
-    }
+        // _result = true;
 
-    // when DCA is actually executed, make sure to update deposit
-    // function executeSwap
+        // 1) withdraw from aave
+        // a) get amt to withdraw
+        (, address owner, , , , uint256 investmentAmount) = _s_JobManager
+            .s_jobs(jobId_);
+        // b) call _s_LendingManager withdraw, to this contract
+        _s_LendingManager.withdraw(owner, investmentAmount);
+
+        // 2) swap in Uniswap
+        // a) call swap from DEXmanager, need to supply given addersses of tokens swap to and from
+
+        // 3) update deposit/job amt in DCAManager
+        // a) call DCAManager
+    }
 }
