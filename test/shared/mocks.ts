@@ -4,7 +4,8 @@ import { waffle } from "hardhat";
 // import { Artifact } from "hardhat/types";
 import ERC_20_ABI from "../../abis/erc20.abi.json";
 import JobManager_ABI from "../../artifacts/contracts/JobManager.sol/JobManager.json";
-import AaveManager_ABI from "../../artifacts/contracts/AaveManager.sol/AaveManager.json";
+import DEXManager_ABI from "../../artifacts/contracts/DEXManager.sol/DEXManager.json";
+import LendingManager_ABI from "../../artifacts/contracts/LendingManager.sol/LendingManager.json";
 import TradeManager_ABI from "../../artifacts/contracts/TradeManager.sol/TradeManager.json";
 
 export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
@@ -36,17 +37,6 @@ export const deployMockJobManager = async (
   return jobManager;
 };
 
-export const deployMockAaveManager = async (
-  deployer: Signer
-): Promise<MockContract> => {
-  const aaveManager: MockContract = await waffle.deployMockContract(
-    deployer,
-    AaveManager_ABI.abi
-  );
-
-  return aaveManager;
-};
-
 export const deployMockTradeManager = async (
   deployer: Signer
 ): Promise<MockContract> => {
@@ -58,4 +48,26 @@ export const deployMockTradeManager = async (
   await tradeManager.mock.swap.returns(true);
 
   return tradeManager;
+};
+
+export const deployMockLendingManager = async (
+  deployer: Signer
+): Promise<MockContract> => {
+  const lendingManager: MockContract = await waffle.deployMockContract(
+    deployer,
+    LendingManager_ABI.abi
+  );
+
+  return lendingManager;
+};
+
+export const deployMockDEXManager = async (
+  deployer: Signer
+): Promise<MockContract> => {
+  const dEXManager: MockContract = await waffle.deployMockContract(
+    deployer,
+    DEXManager_ABI.abi
+  );
+
+  return dEXManager;
 };
