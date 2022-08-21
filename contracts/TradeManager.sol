@@ -47,7 +47,7 @@ contract TradeManager {
     }
 
     // deposit into Aave
-    function deposit() public returns (bool _result) {
+    function deposit(uint256 jobId_) public returns (bool _result) {
         _result = true;
         // call aave manager, to deposit
         // set onBehalfOf to user
