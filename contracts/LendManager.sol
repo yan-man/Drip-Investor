@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // connect to aave, execute txs for lending
 // caller: TradeManager
-contract AaveManager {
+contract LendManager {
     // Type declarations
     // State variables
     // Events

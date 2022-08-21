@@ -3,7 +3,8 @@ pragma solidity ^0.8.9;
 
 // Import this file to use console.log
 import "hardhat/console.sol";
-import "./AaveManager.sol";
+import "./DEXManager.sol";
+import "./LendManager.sol";
 
 // manage txs for DCA:
 // deposit into aave for lending fees
@@ -19,7 +20,12 @@ import "./AaveManager.sol";
 contract TradeManager {
     // Type declarations
     // State variables
+    LendManager private _s_lendingManager;
+    DEXManager private _s_DEXManager;
+
     // Events
+    event LogContractsSet(address lenderAddr_, address DEXAddr_);
+
     // Modifiers
     // constructor
     // Functions: view then pure
@@ -29,6 +35,16 @@ contract TradeManager {
     // Public functions
     // Internal functions
     // Private functions
+
+    // set uniswap address
+    function setTradingContractAddresses(address lenderAddr_, address DEXAddr_)
+        public
+    {
+        _s_DEXManager = DEXManager(DEXAddr_);
+        _s_lendingManager = LendManager(lenderAddr_);
+
+        emit LogContractsSet(DEXAddr_, lenderAddr_);
+    }
 
     // deposit into Aave
     function deposit() public returns (bool _result) {

@@ -6,7 +6,7 @@ import "hardhat/console.sol";
 
 // connect to uniswap, execute txs for swaps
 // caller: TradeManager
-contract UniswapManager {
+contract DEXManager {
     // Type declarations
     // State variables
     // Events
