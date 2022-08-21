@@ -27,6 +27,7 @@ contract TradeManager {
     LendingManager private _s_LendingManager;
     DEXManager private _s_DEXManager;
     JobManager private _s_JobManager;
+    DCAManager private _s_DCAManager;
 
     // Events
     event LogContractsSet(
@@ -121,8 +122,12 @@ contract TradeManager {
 
         // 2) swap in Uniswap
         // a) call swap from DEXmanager, need to supply given addersses of tokens swap to and from
-        _s_DEXManager.swap(owner, investmentAmount);
+
         // 3) update deposit/job amt in DCAManager
         // a) call DCAManager
+        uint256 _amountSwapped = _s_DEXManager.swap(owner, investmentAmount);
+        if (_amountSwapped > 0) {
+            _result = true;
+        }
     }
 }

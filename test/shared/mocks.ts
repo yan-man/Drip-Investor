@@ -46,7 +46,7 @@ export const deployMockTradeManager = async (
     TradeManager_ABI.abi
   );
   await tradeManager.mock.deposit.returns(true);
-  await tradeManager.mock.swap.returns(true);
+  await tradeManager.mock.executeJob.returns(true);
 
   return tradeManager;
 };
@@ -59,6 +59,7 @@ export const deployMockLendingManager = async (
     LendingManager_ABI.abi
   );
   await lendingManager.mock.deposit.returns(true);
+  await lendingManager.mock.withdraw.returns(true);
 
   return lendingManager;
 };
@@ -71,5 +72,6 @@ export const deployMockDEXManager = async (
     DEXManager_ABI.abi
   );
 
+  await dEXManager.mock.swap.returns(0);
   return dEXManager;
 };
