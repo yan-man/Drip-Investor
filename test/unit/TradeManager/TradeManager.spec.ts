@@ -59,23 +59,25 @@ export const UnitTest = (): void => {
       describe(`Swaps`, async function () {
         it.only("Should not allow swap for invalid Id", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(false);
-          await expect(this.tradeManager.swap(0)).to.be.revertedWithCustomError(
+          await expect(
+            this.tradeManager.executeJob(0)
+          ).to.be.revertedWithCustomError(
             this.tradeManager,
             `TradeManager__InvalidId`
           );
         });
-        it("Should allow swap for valid jobId", async function () {
-          await this.mocks.mockJobManager.mock.isValidId.returns(true);
-          await this.mocks.mockJobManager.mock.s_jobs.returns(
-            ethers.BigNumber.from("0"),
-            this.signers[4].address,
-            ethers.BigNumber.from("0"),
-            true,
-            ethers.BigNumber.from("1661074126"),
-            ethers.BigNumber.from("100")
-          );
-          await expect(this.tradeManager.deposit(0)).to.be.not.reverted;
-        });
+        // it("Should allow swap for valid jobId", async function () {
+        //   await this.mocks.mockJobManager.mock.isValidId.returns(true);
+        //   await this.mocks.mockJobManager.mock.s_jobs.returns(
+        //     ethers.BigNumber.from("0"),
+        //     this.signers[4].address,
+        //     ethers.BigNumber.from("0"),
+        //     true,
+        //     ethers.BigNumber.from("1661074126"),
+        //     ethers.BigNumber.from("100")
+        //   );
+        //   await expect(this.tradeManager.deposit(0)).to.be.not.reverted;
+        // });
       });
     });
     // it("Should set the right owner", async function () {});
