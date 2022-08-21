@@ -154,6 +154,15 @@ contract DCAManager is Ownable {
         _result = _s_tm.deposit(_jobId);
         s_userJobs[msg.sender][_jobId] = amount_;
 
+        // // // Approve LendingPool contract to move your DAI
+        // IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
+
+        // TODO: give approvals for total amount
+        // - to Aave lending: IERC20(daiAddress).approve(provider.getLendingPoolCore(), amount_);
+        // - to TradeManager
+        // - to LendingManager
+        // - to DEXManager
+
         emit LogCreateJob(msg.sender, amount_);
     }
 
