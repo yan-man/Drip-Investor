@@ -19,6 +19,8 @@ import "./JobManager.sol";
 
 // caller:
 // KeepersManager
+
+// holds all the tokens
 contract TradeManager {
     // Type declarations
     // State variables
@@ -96,7 +98,9 @@ contract TradeManager {
         _result = _s_LendingManager.deposit(owner, investmentAmount);
     }
 
-    function swap(uint256 jobId_)
+    // withdraw from aave
+    // swap via uniswap
+    function executeJob(uint256 jobId_)
         public
         isInitialized
         isValidJobId(jobId_)
@@ -113,11 +117,11 @@ contract TradeManager {
         (, address owner, , , , uint256 investmentAmount) = _s_JobManager
             .s_jobs(jobId_);
         // b) call _s_LendingManager withdraw, to this contract
-        _s_LendingManager.withdraw(owner, investmentAmount);
+        _s_LendingManager.withdraw(address(this), investmentAmount);
 
         // 2) swap in Uniswap
         // a) call swap from DEXmanager, need to supply given addersses of tokens swap to and from
-
+        _s_DEXManager.swap(owner, investmentAmount);
         // 3) update deposit/job amt in DCAManager
         // a) call DCAManager
     }
