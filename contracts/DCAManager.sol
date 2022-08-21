@@ -37,6 +37,7 @@ contract DCAManager is Ownable {
     event LogContractAddrSet(uint256 id);
     event LogCreateJob(address addr, uint256 amount);
     event LogCancelJob(uint256 jobId);
+    event LogDepositReduced(uint256 jobId, uint256 amount);
 
     // Errors
     error DCAManager__CoreContractNotInitialized();
@@ -184,7 +185,13 @@ contract DCAManager is Ownable {
     }
 
     // after DCA is done, reduce the deposit amt owed to user
-    function reduceDeposit() external returns (bool _result) {
+    function reduceDeposit(
+        uint256 jobId_,
+        address investor_,
+        uint256 amount_
+    ) external returns (bool _result) {
+        s_userJobs[investor_][jobId_] -= amount_;
         _result = true;
+        emit LogDepositReduced(jobId_, amount_);
     }
 }
