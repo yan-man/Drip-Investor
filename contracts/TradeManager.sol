@@ -30,8 +30,18 @@ contract TradeManager {
     // Internal functions
     // Private functions
 
-    // deposit into Aave; could be something else
+    // deposit into Aave
     function deposit() public returns (bool _result) {
+        _result = true;
+        // call aave manager, to deposit
+        // set onBehalfOf to user
+    }
+
+    function swap(uint256 jobId) public returns (bool _result) {
+        // pull some amount out of aave and swap using uniswap
+        // amount of aave is governed by job details - investmentAmount
+        // need to check if users balanceOf is > investmentAmount
+        // set teh recipient to user's address
         _result = true;
     }
 

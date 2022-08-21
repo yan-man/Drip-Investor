@@ -1,7 +1,12 @@
 import { Fixture, MockContract } from "ethereum-waffle";
 import { ContractFactory, Wallet } from "ethers";
 import { ethers } from "hardhat";
-import { DCAManager, JobManager } from "../../typechain-types";
+import {
+  DCAManager,
+  JobManager,
+  TradeManager,
+  KeepersManager,
+} from "../../typechain-types";
 import {
   deployMockUsdc,
   deployMockJobManager,
@@ -12,10 +17,22 @@ import {
 type UnitDCAManagerFixtureType = {
   dCAManager: DCAManager;
   mockUsdc: MockContract;
+  mockJobManager: MockContract;
+  mockTradeManager: MockContract;
 };
 
 type UnitJobManagerFixtureType = {
   jobManager: JobManager;
+};
+
+type UnitTradeManagerFixtureType = {
+  tradeManager: TradeManager;
+};
+
+type UnitKeepersManagerFixtureType = {
+  keepersManager: KeepersManager;
+  mockJobManager: MockContract;
+  mockTradeManager: MockContract;
 };
 
 export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
@@ -64,4 +81,38 @@ export const unitJobManagerFixture: Fixture<UnitJobManagerFixtureType> = async (
   await jobManager.deployed();
 
   return { jobManager };
+};
+
+export const unitTradeManagerFixture: Fixture<
+  UnitTradeManagerFixtureType
+> = async (signers: Wallet[]) => {
+  const deployer: Wallet = signers[0];
+  const TradeManagerFactory: ContractFactory = await ethers.getContractFactory(
+    `TradeManager`
+  );
+  const tradeManager: TradeManager = (await TradeManagerFactory.connect(
+    deployer
+  ).deploy()) as TradeManager;
+
+  await tradeManager.deployed();
+
+  return { tradeManager };
+};
+
+export const unitKeepersManagerFixture: Fixture<
+  UnitKeepersManagerFixtureType
+> = async (signers: Wallet[]) => {
+  const deployer: Wallet = signers[0];
+
+  const mockJobManager = await deployMockJobManager(deployer);
+  const mockTradeManager = await deployMockTradeManager(deployer);
+  const KeepersManagerFactory: ContractFactory =
+    await ethers.getContractFactory(`KeepersManager`);
+  const keepersManager: KeepersManager = (await KeepersManagerFactory.connect(
+    deployer
+  ).deploy()) as KeepersManager;
+
+  await keepersManager.deployed();
+
+  return { keepersManager, mockJobManager, mockTradeManager };
 };

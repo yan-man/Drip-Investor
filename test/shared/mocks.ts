@@ -31,7 +31,8 @@ export const deployMockJobManager = async (
     JobManager_ABI.abi
   );
   await jobManager.mock.create.returns(1);
-
+  await jobManager.mock.getActiveJobIds.returns([0, 2]);
+  await jobManager.mock.isActiveJobs.returns(true);
   return jobManager;
 };
 
@@ -54,6 +55,7 @@ export const deployMockTradeManager = async (
     TradeManager_ABI.abi
   );
   await tradeManager.mock.deposit.returns(true);
+  await tradeManager.mock.swap.returns(true);
 
   return tradeManager;
 };
