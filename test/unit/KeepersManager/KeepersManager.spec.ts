@@ -21,7 +21,7 @@ export const UnitTest = (): void => {
       this.keepersManager.setTradeManager(this.mocks.mockTradeManager.address)
     ).to.not.be.reverted;
   });
-  describe("Deployment", function () {
+  describe("checkUpkeep and performUpkeep", function () {
     beforeEach(`...set mock contract address`, async function () {
       await this.keepersManager.setJobManager(
         this.mocks.mockJobManager.address

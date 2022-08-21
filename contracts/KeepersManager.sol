@@ -65,7 +65,7 @@ contract KeepersManager is KeeperCompatibleInterface {
         if (_activeJobIds.length > 0) {
             for (uint256 i = 0; i < _activeJobIds.length; i++) {
                 uint256 _jobId = _activeJobIds[i];
-                _s_tm.swap(_jobId);
+                _s_tm.swap(_jobId); // perform each swap
             }
         }
     }
