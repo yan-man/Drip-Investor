@@ -6,7 +6,6 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-// import "./libraries/DCAOptions.sol";
 import "./JobManager.sol";
 import "./TradeManager.sol";
 
@@ -20,10 +19,6 @@ contract DCAManager is Ownable {
         DEX_MANAGER, // 3
         LENDING_MANAGER // 4
     }
-    // struct UserJobs {
-    //     // uint256[] jobIds;
-    //     mapping(uint256 => bool) job; // job id => exists?
-    // }
 
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
@@ -80,14 +75,6 @@ contract DCAManager is Ownable {
     constructor(address tokenAddr_) {
         s_tokenAddr = tokenAddr_;
     }
-
-    // Functions: view then pure
-    // External functions
-    // External functions that are view
-    // External functions that are pure
-    // Public functions
-    // Internal functions
-    // Private functions
 
     function setContractAddress(uint256 id_, address addr_) external onlyOwner {
         require(addr_ != address(0), "Zero addr");

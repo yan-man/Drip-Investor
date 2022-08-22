@@ -1,3 +1,4 @@
+import { MockContract } from "ethereum-waffle";
 import { run, ethers, network, artifacts } from "hardhat";
 import { Wallet, ContractFactory } from "ethers";
 import {
@@ -20,22 +21,30 @@ import {
 
 async function main() {
   await run("compile");
+  const signers: SignerWithAddress[] = await ethers.getSigners();
+  let mockUsdc: any;
+  let mockWeth: any;
+  let mockISwapRouter: any;
   if (network.name === "hardhat") {
     console.warn(
       "You are trying to deploy a contract to the Hardhat Network, which" +
         "gets automatically created and destroyed every time. Use the Hardhat" +
         " option '--network localhost'"
     );
+    mockUsdc = await deployMockUsdc(signers[0]);
+    mockWeth = await deployMockWeth(signers[0]);
+    mockISwapRouter = await deployMockISwapRouter(signers[0]);
+  } else if (network.name === "matic") {
+    mockUsdc = { address: "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747" };
+    mockWeth = { address: "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa" };
+    mockISwapRouter = { address: "0xE592427A0AEce92De3Edee1F18E0157C05861564" };
   }
 
-  const signers: SignerWithAddress[] = await ethers.getSigners();
   console.log(
     "Deploying the contracts with the account:",
     await signers[0].getAddress()
   );
 
-  const mockUsdc = await deployMockUsdc(signers[0]);
-  const mockWeth = await deployMockWeth(signers[0]);
   console.log("Mock USDC deployed to:", mockUsdc.address);
   console.log("Mock WEth deployed to:", mockWeth.address);
 
@@ -43,7 +52,8 @@ async function main() {
   const { dEXManager } = await deployDEXManager(
     signers,
     mockUsdc.address,
-    mockWeth.address
+    mockWeth.address,
+    mockISwapRouter.address
   );
   const { tradeManager } = await deployTradeManager(signers);
   const { jobManager } = await deployJobManager(signers);
@@ -168,10 +178,9 @@ async function deployTradeManager(signers: SignerWithAddress[]) {
 async function deployDEXManager(
   signers: SignerWithAddress[],
   mockUsdc: String,
-  mockWeth: String
+  mockWeth: String,
+  mockISwapRouterAddress: String
 ) {
-  const mockISwapRouter = await deployMockISwapRouter(signers[0]);
-
   // await mockILendingPoolAddressesProvider.mock.getLendingPool.returns(
   //   mockILendingPool.address
   // );
@@ -180,14 +189,14 @@ async function deployDEXManager(
     "DEXManager"
   );
   const dEXManager: DEXManager = (await DEXManager.deploy(
-    mockISwapRouter.address,
+    mockISwapRouterAddress,
     mockUsdc,
     mockWeth
   )) as DEXManager;
 
   await dEXManager.deployed();
 
-  console.log("SwapRouter deployed to:", mockISwapRouter.address);
+  console.log("SwapRouter deployed to:", mockISwapRouterAddress);
 
   return { dEXManager };
 }
