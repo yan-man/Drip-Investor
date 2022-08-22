@@ -4,6 +4,9 @@ import {
   deployMockLendingManager,
   deployMockILendingPool,
   deployMockILendingPoolAddressesProvider,
+  deployMockISwapRouter,
+  deployMockWeth,
+  deployMockUsdc,
 } from "../test/shared/mocks";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
@@ -23,6 +26,39 @@ async function main() {
     await signers[0].getAddress()
   );
   const lendingManager = await deployLendingManager(signers);
+  const dEXManager = await deployDEXManager(signers);
+  const tradeManager = await deployTradeManager(signers);
+}
+
+async function deployTradeManager(signers: SignerWithAddress[]) {
+  const TradeManager = await ethers.getContractFactory("TradeManager");
+  const tradeManager = await TradeManager.deploy();
+
+  await tradeManager.deployed();
+
+  console.log("TradeManager deployed to:", tradeManager.address);
+  return tradeManager;
+}
+
+async function deployDEXManager(signers: SignerWithAddress[]) {
+  const mockISwapRouter = await deployMockISwapRouter(signers[0]);
+  const mockUsdc = await deployMockUsdc(signers[0]);
+  const mockWeth = await deployMockWeth(signers[0]);
+  // await mockILendingPoolAddressesProvider.mock.getLendingPool.returns(
+  //   mockILendingPool.address
+  // );
+
+  const DEXManager = await ethers.getContractFactory("DEXManager");
+  const dEXManager = await DEXManager.deploy(
+    mockISwapRouter.address,
+    mockUsdc.address,
+    mockWeth.address
+  );
+
+  await dEXManager.deployed();
+
+  console.log("DEXManager deployed to:", dEXManager.address);
+  return dEXManager;
 }
 
 async function deployLendingManager(signers: SignerWithAddress[]) {
