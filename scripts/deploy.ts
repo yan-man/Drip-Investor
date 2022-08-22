@@ -47,8 +47,20 @@ async function main() {
   );
   const { tradeManager } = await deployTradeManager(signers);
   const { jobManager } = await deployJobManager(signers);
-  const { dCAManager } = await deployDCAManager(signers, mockUsdc.address);
   const { keepersManager } = await deployKeepersManager(signers);
+
+  const { dCAManager } = await deployDCAManager(signers, mockUsdc.address);
+
+  await lendingManager.setDepositToken(mockUsdc.address);
+
+  await keepersManager.setTradeManager(tradeManager.address);
+  await keepersManager.setJobManager(jobManager.address);
+
+  await dCAManager.setContractAddress(0, jobManager.address);
+  await dCAManager.setContractAddress(1, keepersManager.address);
+  await dCAManager.setContractAddress(2, tradeManager.address);
+  await dCAManager.setContractAddress(3, dEXManager.address);
+  await dCAManager.setContractAddress(4, lendingManager.address);
 
   saveFrontendFiles(
     tradeManager,
@@ -88,10 +100,10 @@ async function saveFrontendFiles(
   //   )
   // );
 
-  // const VRFv2ConsumerArtifact = artifacts.readArtifactSync("VRFv2Consumer");
+  // const KeepersManagerArtifact = artifacts.readArtifactSync("KeepersManager");
   // fs.writeFileSync(
-  //   contractsDir + "/VRFv2Consumer.json",
-  //   JSON.stringify(VRFv2ConsumerArtifact, null, 2)
+  //   contractsDir + "/KeepersManager.json",
+  //   JSON.stringify(KeepersManagerArtifact, null, 2)
   // );
 }
 
@@ -198,7 +210,11 @@ async function deployLendingManager(signers: SignerWithAddress[]) {
   await lendingManager.deployed();
 
   console.log("LendingManager deployed to:", lendingManager.address);
-  return { lendingManager };
+  return {
+    lendingManager,
+    mockILendingPool,
+    mockILendingPoolAddressesProvider,
+  };
 }
 
 // We recommend this pattern to be able to use async/await everywhere
