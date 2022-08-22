@@ -153,6 +153,7 @@ export const unitLendingManagerFixture: Fixture<
   await mockILendingPoolAddressesProvider.mock.getLendingPool.returns(
     mockILendingPool.address
   );
+  await mockILendingPool.mock.deposit.returns();
   const LendingManagerFactory: ContractFactory =
     await ethers.getContractFactory(`LendingManager`);
   const lendingManager: LendingManager = (await LendingManagerFactory.connect(

@@ -34,15 +34,17 @@ export const UnitTest = (): void => {
       await expect(this.lendingManager.deposit(this.signers[4].address, 100)).to
         .be.reverted;
     });
-    // describe("Events", function () {
-    //   it("Should emit when deposit token address set", async function () {
-    //     await expect(
-    //       this.lendingManager.setDepositToken(this.mocks.mockUsdc.address)
-    //     )
-    //       .to.emit(this.lendingManager, `LogSetDepositTokenAddress`)
-    //       .withArgs(this.mocks.mockUsdc.address);
-    //   });
-    // });
+
+    describe("...After initialization", function () {
+      beforeEach(`...set mock contract address`, async function () {
+        await this.lendingManager.setDepositToken(this.mocks.mockUsdc.address);
+      });
+      it("Should emit when deposit token address set", async function () {
+        await expect(this.lendingManager.deposit(this.signers[4].address, 100))
+          .to.emit(this.lendingManager, `LogDeposit`)
+          .withArgs(this.signers[4].address, 100);
+      });
+    });
   });
   describe("Lending Manager", function () {
     // it("Should allow setting the Deposit token address", async function () {});
