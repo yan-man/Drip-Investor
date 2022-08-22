@@ -24,6 +24,7 @@ async function main() {
   const signers: SignerWithAddress[] = await ethers.getSigners();
   let mockUsdc: any;
   let mockWeth: any;
+  let mockISwapRouter: any;
   if (network.name === "hardhat") {
     console.warn(
       "You are trying to deploy a contract to the Hardhat Network, which" +
@@ -32,9 +33,11 @@ async function main() {
     );
     mockUsdc = await deployMockUsdc(signers[0]);
     mockWeth = await deployMockWeth(signers[0]);
+    mockISwapRouter = await deployMockISwapRouter(signers[0]);
   } else if (network.name === "matic") {
     mockUsdc = { address: "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747" };
     mockWeth = { address: "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa" };
+    mockISwapRouter = { address: "0xE592427A0AEce92De3Edee1F18E0157C05861564" };
   }
 
   console.log(
@@ -45,13 +48,12 @@ async function main() {
   console.log("Mock USDC deployed to:", mockUsdc.address);
   console.log("Mock WEth deployed to:", mockWeth.address);
 
-  const mockISwapRouter = await deployMockISwapRouter(signers[0]);
   const { lendingManager } = await deployLendingManager(signers);
   const { dEXManager } = await deployDEXManager(
     signers,
     mockUsdc.address,
     mockWeth.address,
-    mockISwapRouter
+    mockISwapRouter.address
   );
   const { tradeManager } = await deployTradeManager(signers);
   const { jobManager } = await deployJobManager(signers);
@@ -177,7 +179,7 @@ async function deployDEXManager(
   signers: SignerWithAddress[],
   mockUsdc: String,
   mockWeth: String,
-  mockISwapRouter: MockContract
+  mockISwapRouterAddress: String
 ) {
   // await mockILendingPoolAddressesProvider.mock.getLendingPool.returns(
   //   mockILendingPool.address
@@ -187,14 +189,14 @@ async function deployDEXManager(
     "DEXManager"
   );
   const dEXManager: DEXManager = (await DEXManager.deploy(
-    mockISwapRouter.address,
+    mockISwapRouterAddress,
     mockUsdc,
     mockWeth
   )) as DEXManager;
 
   await dEXManager.deployed();
 
-  console.log("SwapRouter deployed to:", mockISwapRouter.address);
+  console.log("SwapRouter deployed to:", mockISwapRouterAddress);
 
   return { dEXManager };
 }
