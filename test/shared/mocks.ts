@@ -36,12 +36,12 @@ export const deployMockJobManager = async (
   await jobManager.mock.getActiveJobIds.returns([0, 2]);
   await jobManager.mock.isActiveJobs.returns(true);
   await jobManager.mock.s_jobs.returns(
-    ethers.BigNumber.from("0"),
-    jobManager.address,
-    ethers.BigNumber.from("0"),
-    true,
-    ethers.BigNumber.from("1661074126"),
-    ethers.BigNumber.from("100")
+    ethers.BigNumber.from("0"), // jobId
+    jobManager.address, // owner address
+    ethers.BigNumber.from("0"), // frequencyOptionId
+    true, // isActive
+    ethers.BigNumber.from("1661074126"), // startTime
+    ethers.BigNumber.from("100") // investmentAmount
   );
   return jobManager;
 };

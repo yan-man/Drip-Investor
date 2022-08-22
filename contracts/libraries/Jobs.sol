@@ -11,7 +11,7 @@ library Jobs {
         uint256 frequencyOptionId;
         bool isActive;
         uint256 startTime;
-        uint256 investmentAmount;
+        uint256 investmentAmount; 
         // should have something like initialBalance
     }
 }

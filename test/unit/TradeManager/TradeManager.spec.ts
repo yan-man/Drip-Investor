@@ -15,7 +15,9 @@ export const UnitTest = (): void => {
       ).to.be.not.reverted;
     });
     it("Should revert deposit if not yet initialized", async function () {
-      await expect(this.tradeManager.deposit(0)).to.be.revertedWithCustomError(
+      await expect(
+        this.tradeManager.deposit(this.signers[4].address, 100)
+      ).to.be.revertedWithCustomError(
         this.tradeManager,
         `TradeManager__NotInitialized`
       );
@@ -38,29 +40,20 @@ export const UnitTest = (): void => {
         );
       });
       describe(`Deposits`, async function () {
-        it("Should not allow deposit for invalid Id", async function () {
-          await this.mocks.mockJobManager.mock.isValidId.returns(false);
-          await expect(
-            this.tradeManager.deposit(0)
-          ).to.be.revertedWithCustomError(
-            this.tradeManager,
-            `TradeManager__InvalidId`
-          );
-        });
-        it("Should allow deposit for valid jobId", async function () {
+        it("Should allow deposit for given user address, amount", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(true);
-          await this.mocks.mockJobManager.mock.s_jobs.returns(
-            ethers.BigNumber.from("0"),
-            this.signers[4].address,
-            ethers.BigNumber.from("0"),
-            true,
-            ethers.BigNumber.from("1661074126"),
-            ethers.BigNumber.from("100")
-          );
-          await expect(this.tradeManager.deposit(0)).to.be.not.reverted;
+          await expect(this.tradeManager.deposit(this.signers[4].address, 100))
+            .to.be.not.reverted;
         });
         describe(`Events`, async function () {
-          it("Should emit on successful deposit", async function () {});
+          it("Should emit on successful deposit", async function () {
+            await this.mocks.mockJobManager.mock.isValidId.returns(true);
+            await expect(
+              this.tradeManager.deposit(this.signers[4].address, 100)
+            )
+              .to.emit(this.tradeManager, `LogDeposit`)
+              .withArgs(this.signers[4].address, 100);
+          });
         });
       });
 

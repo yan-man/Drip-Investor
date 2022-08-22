@@ -48,6 +48,7 @@ contract DCAManager is Ownable {
     error DCAManager__InvalidJobCreator(address addr);
     error DCAManager__JobManager__Cancel();
     error DCAManager__InvalidInvestment();
+    error DCAManager__TradeManager__DepositError();
 
     // Modifiers
     modifier isInitialized() {
@@ -144,14 +145,15 @@ contract DCAManager is Ownable {
         if (!_result) {
             revert DCAManager__TransferError();
         }
-        // add user token amount to existing deposit
-        // uint256 _deposit = s_deposits[msg.sender];
-        // s_deposits[msg.sender] = _deposit + amount_;
+        _result = _s_tm.deposit(msg.sender, amount_);
+        if (!_result) {
+            revert DCAManager__TradeManager__DepositError();
+        }
         uint256 _jobId = _s_jm.create(msg.sender, investmentAmount_, options_); // create DCA job
-        _result = _s_tm.deposit(_jobId);
+
         s_userJobs[msg.sender][_jobId] = amount_;
 
-        // // // Approve LendingPool contract to move your DAI
+        // Approve LendingPool contract to move your DAI
         // IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
 
         // TODO: give approvals for total amount

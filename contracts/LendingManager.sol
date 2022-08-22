@@ -18,7 +18,8 @@ contract LendingManager {
     mapping(address => uint256) public s_deposits; // user addr -> num tokens deposited
 
     // Events
-    event LogDeposit();
+    event LogDeposit(address onBehalfOf, uint256 depositAmount);
+    event LogWithdrawal(address to, uint256 withdrawalAmount);
 
     // Errors
     error LendingManager__NotInitialized();
@@ -61,12 +62,12 @@ contract LendingManager {
     }
 
     // when DCA is actually executed, make sure to update deposit
-    function deposit(address onBehalfOf_, uint256 investmentAmount_)
+    function deposit(address onBehalfOf_, uint256 depositAmount_)
         public
         isInitialized
-        returns (bool)
+        returns (bool _result)
     {
-        uint256 _amount = investmentAmount_ * 1e18;
+        uint256 _amount = depositAmount_ * 1e18;
         uint16 _referral = 0;
 
         // // // Approve LendingPool contract to move your DAI
@@ -80,8 +81,7 @@ contract LendingManager {
             _referral
         );
 
-        emit LogDeposit();
-        return true;
+        emit LogDeposit(onBehalfOf_, depositAmount_);
     }
 
     function withdraw(address to_, uint256 withdrawalAmount_)
@@ -98,7 +98,7 @@ contract LendingManager {
             to_ // maybe send straight to DEXManager
         );
 
-        emit LogDeposit();
+        emit LogWithdrawal(to_, withdrawalAmount_);
         _result = true;
     }
 }

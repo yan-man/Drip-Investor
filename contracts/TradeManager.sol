@@ -36,6 +36,7 @@ contract TradeManager {
         address DCAManagerAddr
     );
     event LogExecuteJob(uint256 jobId);
+    event LogDeposit(address investor, uint256 investmentAmount);
 
     error TradeManager__NotInitialized();
     error TradeManager__InvalidId(uint256 jobId);
@@ -91,21 +92,13 @@ contract TradeManager {
     }
 
     // deposit into Aave
-    function deposit(uint256 jobId_)
+    function deposit(address investorAddr_, uint256 depositAmount_)
         public
         isInitialized
-        isValidJobId(jobId_)
         returns (bool _result)
     {
-        // get job from jobmanager
-        // _result = _s_LendingManager.deposit;
-        // call aave manager, to deposit
-        // set onBehalfOf to user
-
-        (, address owner, , , , uint256 investmentAmount) = _s_JobManager
-            .s_jobs(jobId_);
-
-        _result = _s_LendingManager.deposit(owner, investmentAmount);
+        _result = _s_LendingManager.deposit(investorAddr_, depositAmount_);
+        emit LogDeposit(investorAddr_, depositAmount_);
     }
 
     // withdraw from aave
