@@ -103,13 +103,13 @@ describe(`Unit tests`, async () => {
 
   describe(`DEXManager`, async () => {
     beforeEach(async function () {
-      const { dEXManager, mockISwapRouter } = await this.loadFixture(
+      const { dEXManager, mockISwapRouter, mockUsdc } = await this.loadFixture(
         unitDEXManagerFixture
       );
       this.dEXManager = dEXManager;
       this.mocks = {} as Mocks;
       this.mocks.mockISwapRouter = mockISwapRouter;
-      //  this.mocks.mockTradeManager = mockTradeManager;
+      this.mocks.mockUsdc = mockUsdc;
     });
     DEXManagerUnitTest();
   });

@@ -183,6 +183,7 @@ export const unitDEXManagerFixture: Fixture<UnitDEXManagerFixtureType> = async (
   signers: Wallet[]
 ) => {
   const deployer: Wallet = signers[0];
+  const mockUsdc = await deployMockUsdc(deployer);
   const mockISwapRouter = await deployMockISwapRouter(deployer);
 
   await mockISwapRouter.mock.exactInputSingle.returns(0);
@@ -197,5 +198,6 @@ export const unitDEXManagerFixture: Fixture<UnitDEXManagerFixtureType> = async (
   return {
     dEXManager,
     mockISwapRouter,
+    mockUsdc,
   };
 };

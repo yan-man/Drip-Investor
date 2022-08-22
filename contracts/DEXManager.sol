@@ -12,20 +12,23 @@ import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 contract DEXManager {
     // Type declarations
     // State variables
-    ISwapRouter public immutable swapRouter;
+    ISwapRouter public immutable s_swapRouter;
     address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public constant WETH9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address public s_tokenIn;
 
     // For this example, we will set the pool fee to 0.3%.
     uint24 public constant poolFee = 3000;
 
     // Events
+    event LogSetTokenIn(address tokenIn);
+
     // Errors
     // Modifiers
 
     constructor(ISwapRouter _swapRouter) {
-        swapRouter = _swapRouter;
+        s_swapRouter = _swapRouter;
     }
 
     // constructor
@@ -36,6 +39,11 @@ contract DEXManager {
     // Public functions
     // Internal functions
     // Private functions
+
+    function setTokenIn(address tokenIn_) external {
+        s_tokenIn = tokenIn_;
+        emit LogSetTokenIn(tokenIn_);
+    }
 
     function swap(address recipient_, uint256 amountIn)
         external
@@ -52,7 +60,7 @@ contract DEXManager {
         );
 
         // Approve the router to spend DAI.
-        TransferHelper.safeApprove(DAI, address(swapRouter), amountIn);
+        TransferHelper.safeApprove(DAI, address(s_swapRouter), amountIn);
 
         // exact input swap
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
@@ -66,6 +74,6 @@ contract DEXManager {
                 amountOutMinimum: 0,
                 sqrtPriceLimitX96: 0
             });
-        amountOut = swapRouter.exactInputSingle(params);
+        amountOut = s_swapRouter.exactInputSingle(params);
     }
 }
