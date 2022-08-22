@@ -29,6 +29,21 @@ export const UnitTest = (): void => {
       });
     });
   });
+  describe("deposit", function () {
+    it("Should revert if not initialized", async function () {
+      await expect(this.lendingManager.deposit(this.signers[4].address, 100)).to
+        .be.reverted;
+    });
+    // describe("Events", function () {
+    //   it("Should emit when deposit token address set", async function () {
+    //     await expect(
+    //       this.lendingManager.setDepositToken(this.mocks.mockUsdc.address)
+    //     )
+    //       .to.emit(this.lendingManager, `LogSetDepositTokenAddress`)
+    //       .withArgs(this.mocks.mockUsdc.address);
+    //   });
+    // });
+  });
   describe("Lending Manager", function () {
     // it("Should allow setting the Deposit token address", async function () {});
     // it("Should set the lending pool and  provider on construction", async function () {});
