@@ -136,7 +136,6 @@ contract TradeManager {
         // a) get amt to withdraw
         (, address owner, , , , uint256 investmentAmount) = _s_JobManager
             .s_jobs(jobId_);
-
         _hasFunds(owner, jobId_, investmentAmount);
 
         // b) call _s_LendingManager withdraw, to this contract
