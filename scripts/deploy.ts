@@ -28,8 +28,25 @@ async function main() {
   const lendingManager = await deployLendingManager(signers);
   const dEXManager = await deployDEXManager(signers);
   const tradeManager = await deployTradeManager(signers);
+  const jobManager = await deployJobManager(signers);
 }
+async function deployJobManager(signers: SignerWithAddress[]) {
+  const DCAOptions = await ethers.getContractFactory("DCAOptions");
+  const dCAOptions = await DCAOptions.deploy();
 
+  const JobManager = await ethers.getContractFactory("JobManager", {
+    libraries: {
+      DCAOptions: dCAOptions.address,
+    },
+  });
+  const jobManager = await JobManager.deploy();
+
+  await jobManager.deployed();
+
+  console.log("JobManager deployed to:", jobManager.address);
+  console.log("DCAOptions lib deployed to:", dCAOptions.address);
+  return jobManager;
+}
 async function deployTradeManager(signers: SignerWithAddress[]) {
   const TradeManager = await ethers.getContractFactory("TradeManager");
   const tradeManager = await TradeManager.deploy();
@@ -57,7 +74,9 @@ async function deployDEXManager(signers: SignerWithAddress[]) {
 
   await dEXManager.deployed();
 
-  console.log("DEXManager deployed to:", dEXManager.address);
+  console.log("SwapRouter deployed to:", mockISwapRouter.address);
+  console.log("Mock USDC deployed to:", mockUsdc.address);
+  console.log("Mock WEth deployed to:", mockWeth.address);
   return dEXManager;
 }
 
