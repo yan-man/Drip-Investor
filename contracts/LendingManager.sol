@@ -79,6 +79,7 @@ contract LendingManager {
             onBehalfOf_,
             0 // referral code
         );
+        _result = true;
 
         emit LogDeposit(onBehalfOf_, depositAmount_);
     }
@@ -91,13 +92,14 @@ contract LendingManager {
         uint256 _amount = withdrawalAmount_ * 1e18;
 
         // Deposit 1000 DAI
-        s_lendingPool.withdraw(
+        uint256 _withdrawnAmount = s_lendingPool.withdraw(
             s_depositTokenAddress,
             _amount,
             to_ // maybe send straight to DEXManager
         );
-
-        emit LogWithdrawal(to_, withdrawalAmount_);
-        _result = true;
+        if (_withdrawnAmount > 0) {
+            _result = true;
+        }
+        emit LogWithdrawal(to_, _withdrawnAmount);
     }
 }

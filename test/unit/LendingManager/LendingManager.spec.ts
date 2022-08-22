@@ -39,10 +39,27 @@ export const UnitTest = (): void => {
       beforeEach(`...set mock contract address`, async function () {
         await this.lendingManager.setDepositToken(this.mocks.mockUsdc.address);
       });
-      it("Should emit when deposit token address set", async function () {
+      it("Should emit when deposit", async function () {
         await expect(this.lendingManager.deposit(this.signers[4].address, 100))
           .to.emit(this.lendingManager, `LogDeposit`)
           .withArgs(this.signers[4].address, 100);
+      });
+    });
+  });
+  describe("withdraw", function () {
+    it("Should revert if not initialized", async function () {
+      await expect(this.lendingManager.withdraw(this.signers[4].address, 100))
+        .to.be.reverted;
+    });
+
+    describe("...After initialization", function () {
+      beforeEach(`...set mock contract address`, async function () {
+        await this.lendingManager.setDepositToken(this.mocks.mockUsdc.address);
+      });
+      it("Should emit when withdrawal", async function () {
+        await expect(this.lendingManager.withdraw(this.signers[4].address, 100))
+          .to.emit(this.lendingManager, `LogWithdrawal`)
+          .withArgs(this.signers[4].address, 0);
       });
     });
   });
