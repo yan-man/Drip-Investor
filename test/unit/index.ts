@@ -5,6 +5,7 @@ import {
   unitTradeManagerFixture,
   unitKeepersManagerFixture,
   unitLendingManagerFixture,
+  unitDEXManagerFixture,
 } from "../shared/fixtures";
 import { Mocks, Signers } from "../shared/types";
 import { UnitTest as DCAManagerUnitTest } from "./DCAManager/DCAManager.spec";
@@ -12,6 +13,7 @@ import { UnitTest as JobManagerUnitTest } from "./JobManager/JobManager.spec";
 import { UnitTest as KeepersManagerUnitTest } from "./KeepersManager/KeepersManager.spec";
 import { UnitTest as TradeManagerUnitTest } from "./TradeManager/TradeManager.spec";
 import { UnitTest as LendingManagerUnitTest } from "./LendingManager/LendingManager.spec";
+import { UnitTest as DEXManagerUnitTest } from "./DEXManager/DEXManager.spec";
 describe(`Unit tests`, async () => {
   before(async function () {
     const wallets = waffle.provider.getWallets();
@@ -97,5 +99,24 @@ describe(`Unit tests`, async () => {
       this.mocks.mockUsdc = mockUsdc;
     });
     LendingManagerUnitTest();
+  });
+
+  describe(`DEXManager`, async () => {
+    beforeEach(async function () {
+      const {
+        dEXManager,
+        mockISwapRouter,
+        mockUsdc,
+        mockWeth,
+        mockTransferHelper,
+      } = await this.loadFixture(unitDEXManagerFixture);
+      this.dEXManager = dEXManager;
+      this.mocks = {} as Mocks;
+      this.mocks.mockISwapRouter = mockISwapRouter;
+      this.mocks.mockUsdc = mockUsdc;
+      this.mocks.mockWeth = mockWeth;
+      this.mocks.mockTransferHelper = mockTransferHelper;
+    });
+    DEXManagerUnitTest();
   });
 });
