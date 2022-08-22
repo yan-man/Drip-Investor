@@ -25,10 +25,41 @@ async function main() {
     "Deploying the contracts with the account:",
     await signers[0].getAddress()
   );
+
+  const mockUsdc = await deployMockUsdc(signers[0]);
+  const mockWeth = await deployMockWeth(signers[0]);
+  console.log("Mock USDC deployed to:", mockUsdc.address);
+  console.log("Mock WEth deployed to:", mockWeth.address);
+
   const lendingManager = await deployLendingManager(signers);
-  const dEXManager = await deployDEXManager(signers);
+  const dEXManager = await deployDEXManager(
+    signers,
+    mockUsdc.address,
+    mockWeth.address
+  );
   const tradeManager = await deployTradeManager(signers);
   const jobManager = await deployJobManager(signers);
+  const dCAManager = await deployDCAManager(signers, mockUsdc.address);
+  const keepersManager = await deployKeepersManager(signers);
+}
+
+async function deployKeepersManager(signers: SignerWithAddress[]) {
+  const KeepersManager = await ethers.getContractFactory("KeepersManager");
+  const keepersManager = await KeepersManager.deploy();
+
+  await keepersManager.deployed();
+
+  console.log("KeepersManager deployed to:", keepersManager.address);
+  return keepersManager;
+}
+async function deployDCAManager(signers: SignerWithAddress[], USDC: String) {
+  const DCAManager = await ethers.getContractFactory("DCAManager");
+  const dCAManager = await DCAManager.deploy(USDC);
+
+  await dCAManager.deployed();
+
+  console.log("DCAManager deployed to:", dCAManager.address);
+  return dCAManager;
 }
 async function deployJobManager(signers: SignerWithAddress[]) {
   const DCAOptions = await ethers.getContractFactory("DCAOptions");
@@ -57,10 +88,13 @@ async function deployTradeManager(signers: SignerWithAddress[]) {
   return tradeManager;
 }
 
-async function deployDEXManager(signers: SignerWithAddress[]) {
+async function deployDEXManager(
+  signers: SignerWithAddress[],
+  mockUsdc: String,
+  mockWeth: String
+) {
   const mockISwapRouter = await deployMockISwapRouter(signers[0]);
-  const mockUsdc = await deployMockUsdc(signers[0]);
-  const mockWeth = await deployMockWeth(signers[0]);
+
   // await mockILendingPoolAddressesProvider.mock.getLendingPool.returns(
   //   mockILendingPool.address
   // );
@@ -68,15 +102,14 @@ async function deployDEXManager(signers: SignerWithAddress[]) {
   const DEXManager = await ethers.getContractFactory("DEXManager");
   const dEXManager = await DEXManager.deploy(
     mockISwapRouter.address,
-    mockUsdc.address,
-    mockWeth.address
+    mockUsdc,
+    mockWeth
   );
 
   await dEXManager.deployed();
 
   console.log("SwapRouter deployed to:", mockISwapRouter.address);
-  console.log("Mock USDC deployed to:", mockUsdc.address);
-  console.log("Mock WEth deployed to:", mockWeth.address);
+
   return dEXManager;
 }
 
