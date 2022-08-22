@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./JobManager.sol";
 import "./TradeManager.sol";
 
+// should own the tokens, and delegate access to necessary parties
 contract DCAManager is Ownable {
     // Type declarations
     enum CoreContractId {
@@ -26,8 +27,8 @@ contract DCAManager is Ownable {
 
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
-    mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
-    mapping(address => mapping(uint256 => uint256)) public s_userJobs; // user address -> (job id -> num tokens deposited)
+    // mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
+    mapping(address => mapping(uint256 => uint256)) public s_userJobs; // user address -> (job id -> num tokens deposited); should probs be userFunds
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
     JobManager private _s_jm;
@@ -37,6 +38,7 @@ contract DCAManager is Ownable {
     event LogContractAddrSet(uint256 id);
     event LogCreateJob(address addr, uint256 amount);
     event LogCancelJob(uint256 jobId);
+    event LogDepositReduced(uint256 jobId, uint256 amount);
 
     // Errors
     error DCAManager__CoreContractNotInitialized();
@@ -46,6 +48,7 @@ contract DCAManager is Ownable {
     error DCAManager__InvalidJobCreator(address addr);
     error DCAManager__JobManager__Cancel();
     error DCAManager__InvalidInvestment();
+    error DCAManager__TradeManager__DepositError();
 
     // Modifiers
     modifier isInitialized() {
@@ -119,11 +122,6 @@ contract DCAManager is Ownable {
         }
     }
 
-    // // Should receive tokens successfully before calling DCAOptions validation / Job Manager
-    // function deposit(uint _amount) public payable {
-    //     // IERC20(token).transferFrom(msg.sender, address(this), _amount);
-    // }
-
     /**
      * @param amount_ amount of token that is
      * @param options_ options flag array. See DCAOptions library
@@ -147,12 +145,22 @@ contract DCAManager is Ownable {
         if (!_result) {
             revert DCAManager__TransferError();
         }
-        // add user token amount to existing deposit
-        uint256 _deposit = s_deposits[msg.sender];
-        s_deposits[msg.sender] = _deposit + amount_;
+        _result = _s_tm.deposit(msg.sender, amount_);
+        if (!_result) {
+            revert DCAManager__TradeManager__DepositError();
+        }
         uint256 _jobId = _s_jm.create(msg.sender, investmentAmount_, options_); // create DCA job
-        _result = _s_tm.deposit();
+
         s_userJobs[msg.sender][_jobId] = amount_;
+
+        // Approve LendingPool contract to move your DAI
+        // IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
+
+        // TODO: give approvals for total amount
+        // - to Aave lending: IERC20(daiAddress).approve(provider.getLendingPoolCore(), amount_);
+        // - to TradeManager
+        // - to LendingManager
+        // - to DEXManager
 
         emit LogCreateJob(msg.sender, amount_);
     }
@@ -177,5 +185,16 @@ contract DCAManager is Ownable {
             _amount
         );
         emit LogCancelJob(jobId_);
+    }
+
+    // after DCA is done, reduce the deposit amt owed to user
+    function reduceDeposit(
+        uint256 jobId_,
+        address investor_,
+        uint256 amount_
+    ) external returns (bool _result) {
+        s_userJobs[investor_][jobId_] -= amount_;
+        _result = true;
+        emit LogDepositReduced(jobId_, amount_);
     }
 }

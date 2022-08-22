@@ -2,7 +2,7 @@ import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("Job Manager", function () {
+describe("DEX Manager", function () {
   beforeEach(``, async function () {
     this.signers = await ethers.getSigners();
     // const DCAManager = await ethers.getContractFactory("DCAManager");

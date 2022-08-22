@@ -67,7 +67,7 @@ export const UnitTest = (): void => {
             .setContractAddress(0, testAddr)
         ).to.be.reverted;
       });
-      // it("Should set other initialized defaults in storage", async function () {});
+      it("Should revert if safeTransferFrom is unsuccessful", async function () {});
       describe("Events", function () {
         it("Should emit event when a core contract address is updated", async function () {
           await expect(
@@ -154,13 +154,6 @@ export const UnitTest = (): void => {
           .connect(this.signers[0])
           .createDCAJob(_depositAmount, _depositAmount / 10, [0, 0]);
         await tx.wait();
-
-        // expect saved deposit amount to match expected
-        expect(
-          await this.dCAManager
-            .connect(this.signers[0])
-            .s_deposits(this.signers[0].address)
-        ).to.be.equal(_depositAmount);
         expect(
           await this.dCAManager
             .connect(this.signers[0])
@@ -210,9 +203,6 @@ export const UnitTest = (): void => {
               _mockJobId
             )
           ).to.be.equal(_depositAmount);
-          expect(
-            await this.dCAManager.s_deposits(this.signers[1].address)
-          ).to.be.equal(this._depositAmount + _depositAmount);
         });
         it("Should cancel job", async function () {
           expect(
@@ -266,8 +256,9 @@ export const UnitTest = (): void => {
               .withArgs(this._mockJobId);
           });
         });
-
-        // it("", async function () {});
+      });
+      describe(`...after job is created`, async function () {
+        it("Should return hasDepositedFunds", async function () {});
       });
       describe("Events", function () {
         it("Should emit event when valid DCA job is created", async function () {

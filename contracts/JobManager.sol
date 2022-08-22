@@ -3,10 +3,9 @@ pragma solidity ^0.8.9;
 
 // Import this file to use console.log
 import "hardhat/console.sol";
-import "./libraries/DCAOptions.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-
 import "./libraries/DCAOptions.sol";
+import "./libraries/Jobs.sol";
 import "./DCAManager.sol";
 
 // called by:
@@ -18,20 +17,8 @@ import "./DCAManager.sol";
 contract JobManager {
     using Counters for Counters.Counter;
 
-    // Type declarations
-    // save DCA jobs, mapping? job id -> Job struct
-    struct Job {
-        uint256 id;
-        address owner;
-        uint256 frequencyOptionId;
-        bool isActive;
-        uint256 startTime;
-        uint256 investmentAmount;
-        // should have something like initialBalance
-    }
-
     // State variables
-    mapping(uint256 => Job) public s_jobs; // jobId -> Job
+    mapping(uint256 => Jobs.Job) public s_jobs; // jobId -> Job
     Counters.Counter private _jobIds; // 0-indexed
     uint256 public _s_numActiveJobs; // needed to simplify memory array passed from getValidIds
     // DCAManager private _s_dcam;
@@ -104,7 +91,7 @@ contract JobManager {
         uint256 _idx;
         uint256 _maxId = _jobIds.current();
         while (_idx < _maxId && _resultId < _numActiveJobs) {
-            Job memory _job = s_jobs[_idx];
+            Jobs.Job memory _job = s_jobs[_idx];
             if (_job.startTime != 0 && _job.isActive) {
                 _result[_resultId] = _job.id;
                 _resultId++;
@@ -117,7 +104,7 @@ contract JobManager {
         uint256 _idx;
         uint256 _maxId = _jobIds.current();
         while (_idx < _maxId) {
-            Job memory _job = s_jobs[_idx];
+            Jobs.Job memory _job = s_jobs[_idx];
             if (_job.startTime != 0 && _job.isActive) {
                 _isActive = true;
                 break;
@@ -141,7 +128,7 @@ contract JobManager {
         returns (uint256 _jobId)
     {
         _jobId = _jobIds.current();
-        s_jobs[_jobId] = Job({
+        s_jobs[_jobId] = Jobs.Job({
             id: _jobId,
             owner: owner_,
             frequencyOptionId: options_[0],
@@ -159,7 +146,7 @@ contract JobManager {
         validateCancel(id_)
         returns (bool _result)
     {
-        Job storage _job = s_jobs[id_];
+        Jobs.Job storage _job = s_jobs[id_];
         _job.isActive = false;
         _result = true;
         _s_numActiveJobs--;

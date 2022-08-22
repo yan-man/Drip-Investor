@@ -51,9 +51,19 @@ describe(`Unit tests`, async () => {
 
   describe(`TradeManager`, async () => {
     beforeEach(async function () {
-      const { tradeManager } = await this.loadFixture(unitTradeManagerFixture);
+      const {
+        tradeManager,
+        mockJobManager,
+        mockLendingManager,
+        mockDEXManager,
+        mockDCAManager,
+      } = await this.loadFixture(unitTradeManagerFixture);
       this.tradeManager = tradeManager;
       this.mocks = {} as Mocks;
+      this.mocks.mockJobManager = mockJobManager;
+      this.mocks.mockLendingManager = mockLendingManager;
+      this.mocks.mockDEXManager = mockDEXManager;
+      this.mocks.mockDCAManager = mockDCAManager;
     });
     TradeManagerUnitTest();
   });
