@@ -10,7 +10,7 @@ import TradeManager_ABI from "../../artifacts/contracts/TradeManager.sol/TradeMa
 import DCAManager_ABI from "../../artifacts/contracts/DCAManager.sol/DCAManager.json";
 import ILendingPoolAddressesProvider_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPoolAddressesProvider.sol/ILendingPoolAddressesProvider.json";
 import ILendingPool_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPool.sol/ILendingPool.json";
-
+import ISwapRouter_ABI from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
 export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   //   const erc20Artifact: Artifact = await artifacts.readArtifact("ERC20");
   const erc20: MockContract = await waffle.deployMockContract(
@@ -118,4 +118,14 @@ export const deployMockILendingPool = async (
     ILendingPool_ABI.abi
   );
   return iLendingPool;
+};
+
+export const deployMockISwapRouter = async (
+  deployer: Signer
+): Promise<MockContract> => {
+  const iSwapRouter: MockContract = await waffle.deployMockContract(
+    deployer,
+    ISwapRouter_ABI.abi
+  );
+  return iSwapRouter;
 };

@@ -7,6 +7,7 @@ import {
   TradeManager,
   KeepersManager,
   LendingManager,
+  DEXManager,
 } from "../../typechain-types/contracts/";
 import {
   deployMockUsdc,
@@ -17,6 +18,7 @@ import {
   deployMockDCAManager,
   deployMockILendingPoolAddressesProvider,
   deployMockILendingPool,
+  deployMockISwapRouter,
 } from "./mocks";
 
 type UnitDCAManagerFixtureType = {
@@ -48,6 +50,11 @@ type UnitLendingManagerFixtureType = {
   lendingManager: LendingManager;
   mockILendingPoolAddressesProvider: MockContract;
   mockILendingPool: MockContract;
+};
+
+type UnitDEXManagerFixtureType = {
+  dEXManager: DEXManager;
+  mockISwapRouter: MockContract;
 };
 
 export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
@@ -169,5 +176,26 @@ export const unitLendingManagerFixture: Fixture<
     mockILendingPoolAddressesProvider,
     mockILendingPool,
     mockUsdc,
+  };
+};
+
+export const unitDEXManagerFixture: Fixture<UnitDEXManagerFixtureType> = async (
+  signers: Wallet[]
+) => {
+  const deployer: Wallet = signers[0];
+  const mockISwapRouter = await deployMockISwapRouter(deployer);
+
+  await mockISwapRouter.mock.exactInputSingle.returns(0);
+
+  const DEXManagerFactory: ContractFactory = await ethers.getContractFactory(
+    `DEXManager`
+  );
+  const dEXManager: DEXManager = (await DEXManagerFactory.connect(
+    deployer
+  ).deploy(mockISwapRouter.address)) as DEXManager;
+  await dEXManager.deployed();
+  return {
+    dEXManager,
+    mockISwapRouter,
   };
 };
