@@ -1,18 +1,47 @@
-import { ethers } from "hardhat";
+import { run, ethers, network, artifacts } from "hardhat";
+import { Wallet } from "ethers";
+import {
+  deployMockLendingManager,
+  deployMockILendingPool,
+  deployMockILendingPoolAddressesProvider,
+} from "../test/shared/mocks";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  await run("compile");
+  if (network.name === "hardhat") {
+    console.warn(
+      "You are trying to deploy a contract to the Hardhat Network, which" +
+        "gets automatically created and destroyed every time. Use the Hardhat" +
+        " option '--network localhost'"
+    );
+  }
 
-  const lockedAmount = ethers.utils.parseEther("1");
+  const signers: SignerWithAddress[] = await ethers.getSigners();
+  console.log(
+    "Deploying the contracts with the account:",
+    await signers[0].getAddress()
+  );
+  const lendingManager = await deployLendingManager(signers);
+}
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+async function deployLendingManager(signers: SignerWithAddress[]) {
+  const mockILendingPool = await deployMockILendingPool(signers[0]);
+  const mockILendingPoolAddressesProvider =
+    await deployMockILendingPoolAddressesProvider(signers[0]);
+  await mockILendingPoolAddressesProvider.mock.getLendingPool.returns(
+    mockILendingPool.address
+  );
 
-  await lock.deployed();
+  const LendingManager = await ethers.getContractFactory("LendingManager");
+  const lendingManager = await LendingManager.deploy(
+    mockILendingPoolAddressesProvider.address
+  );
 
-  console.log("Lock with 1 ETH deployed to:", lock.address);
+  await lendingManager.deployed();
+
+  console.log("LendingManager deployed to:", lendingManager.address);
+  return lendingManager;
 }
 
 // We recommend this pattern to be able to use async/await everywhere

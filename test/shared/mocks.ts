@@ -88,6 +88,7 @@ export const deployMockLendingManager = async (
   );
   await lendingManager.mock.deposit.returns(true);
   await lendingManager.mock.withdraw.returns(true);
+  await lendingManager.mock.setDepositToken.returns();
 
   return lendingManager;
 };
@@ -124,7 +125,6 @@ export const deployMockILendingPoolAddressesProvider = async (
       deployer,
       ILendingPoolAddressesProvider_ABI.abi
     );
-
   return iLendingPoolAddressesProvider;
 };
 
