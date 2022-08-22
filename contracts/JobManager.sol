@@ -1,19 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-// Import this file to use console.log
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./libraries/DCAOptions.sol";
 import "./libraries/Jobs.sol";
 import "./DCAManager.sol";
 
-// called by:
-// - KeepersManager
-
-// caller:
-// - User
-// all other core contracts, to access contract address directory
 contract JobManager {
     using Counters for Counters.Counter;
 
@@ -55,20 +48,6 @@ contract JobManager {
         }
         _;
     }
-
-    // constructor
-
-    // constructor(address dCAManager_) {
-    //     _s_dcam = DCAManager(dCAManager_);
-    // }
-
-    // Functions: view then pure
-    // External functions
-    // External functions that are view
-    // External functions that are pure\
-    // Public functions
-    // Internal functions
-    // Private functions
 
     function isValidId(uint256 id_) external view returns (bool _result) {
         if (s_jobs[id_].startTime != 0 && s_jobs[id_].isActive) {
@@ -112,10 +91,6 @@ contract JobManager {
             _idx++;
         }
     }
-
-    // external, only called by DCAManager
-    // should save a new job and show active or not
-    // return newly saved id
 
     function create(
         address owner_,

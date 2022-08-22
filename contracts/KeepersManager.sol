@@ -7,31 +7,7 @@ import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "./JobManager.sol";
 import "./TradeManager.sol";
 
-// manage cnx with chainlink keepers
-// act as upkeep contract: "https://keepers.chain.link/"
-// validate logic on certain jobs - by calling Job manager?
-// execute jobs by calling aave/uniswap managers
-
-// calls:
-// - JobManager to see which active jobs to execute
-// - TradeManager ot actually execute trade
-
-// caller:
-// - JobManager
 contract KeepersManager is KeeperCompatibleInterface {
-    // Type declarations
-    // State variables
-    // Events
-    // Modifiers
-    // constructor
-    // Functions: view then pure
-    // External functions
-    // External functions that are view
-    // External functions that are pure
-    // Public functions
-    // Internal functions
-    // Private functions
-
     JobManager private _s_jm;
     TradeManager private _s_tm;
 

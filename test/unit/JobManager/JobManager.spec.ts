@@ -159,3 +159,6 @@ export const UnitTest = (): void => {
   //   });
   // });
 };
+
+// TODO: test start dates. Make sure start date is after now.
+// TODO: add end date functionality

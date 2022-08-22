@@ -7,15 +7,10 @@ import "hardhat/console.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "./libraries/TransferHelper.sol";
 
-// connect to uniswap, execute txs for swaps
-// caller: TradeManager
 contract DEXManager {
     // Type declarations
     // State variables
     ISwapRouter public immutable s_swapRouter;
-    // address public constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    // address public constant WETH9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    // address public constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address public immutable s_tokenIn;
     address public immutable s_tokenOut;
 
@@ -24,10 +19,6 @@ contract DEXManager {
 
     // Events
     event LogSwap(uint256 tokenInAmount, uint256 tokenOutAmount);
-
-    // Errors
-
-    // Modifiers
 
     constructor(
         ISwapRouter _swapRouter,
@@ -38,15 +29,6 @@ contract DEXManager {
         s_tokenIn = tokenIn_;
         s_tokenOut = tokenOut_;
     }
-
-    // constructor
-    // Functions: view then pure
-    // External functions
-    // External functions that are view
-    // External functions that are pure
-    // Public functions
-    // Internal functions
-    // Private functions
 
     function swap(address recipient_, uint256 amountIn_)
         external

@@ -7,8 +7,6 @@ import "./interfaces/Aave/ILendingPoolAddressesProvider.sol";
 import "./interfaces/Aave/ILendingPool.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-// connect to aave, execute txs for lending
-// caller: TradeManager
 contract LendingManager {
     // Type declarations
     // State variables
@@ -24,16 +22,6 @@ contract LendingManager {
 
     // Errors
     error LendingManager__NotInitialized();
-
-    // Modifiers
-    // constructor
-    // Functions: view then pure
-    // External functions
-    // External functions that are view
-    // External functions that are pure
-    // Public functions
-    // Internal functions
-    // Private functions
 
     modifier isInitialized() {
         if (
@@ -66,13 +54,6 @@ contract LendingManager {
         isInitialized
         returns (bool _result)
     {
-        // uint256 _amount = depositAmount_ * 1e18;
-        // uint16 _referral = 0;
-
-        // // // Approve LendingPool contract to move your DAI
-        // IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
-
-        // // Deposit 1000 DAI
         s_lendingPool.deposit(
             s_depositTokenAddress,
             depositAmount_ * 1e18,
@@ -91,7 +72,6 @@ contract LendingManager {
     {
         uint256 _amount = withdrawalAmount_ * 1e18;
 
-        // Deposit 1000 DAI
         uint256 _withdrawnAmount = s_lendingPool.withdraw(
             s_depositTokenAddress,
             _amount,
