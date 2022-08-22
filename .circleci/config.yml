@@ -24,7 +24,7 @@ commands:
       - run: |
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
-          ./codecov -t 2aa684ca-9d0b-4c76-89be-8d5f54c3e508
+          ./codecov -t 6d94c2d1-326d-4a36-961e-011d9cac3bc6
   test-frontend:
     steps:
       - run: cd ./frontend/ && npm i
@@ -32,7 +32,7 @@ commands:
       - run: |
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
-          ./codecov -t 2aa684ca-9d0b-4c76-89be-8d5f54c3e508
+          ./codecov -t 6d94c2d1-326d-4a36-961e-011d9cac3bc6
 executors:
   docker-executor:
     docker:
