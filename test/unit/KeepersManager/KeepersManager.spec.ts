@@ -30,7 +30,7 @@ export const UnitTest = (): void => {
         this.mocks.mockTradeManager.address
       );
     });
-    it("Should return based on whether an active job exists", async function () {
+    it("Should return true when an active job exists", async function () {
       await this.mocks.mockJobManager.mock.isActiveJobs.returns(true);
       const [_upkeepNeeded, _performData] =
         await this.keepersManager.checkUpkeep(
@@ -38,7 +38,7 @@ export const UnitTest = (): void => {
         );
       expect(_upkeepNeeded).to.be.equals(true);
     });
-    it("Should return based on whether an active job exists", async function () {
+    it("Should return false when an active job !exists", async function () {
       await this.mocks.mockJobManager.mock.isActiveJobs.returns(false);
       const [_upkeepNeeded, _performData] =
         await this.keepersManager.checkUpkeep(
