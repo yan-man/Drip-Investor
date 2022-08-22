@@ -8,18 +8,30 @@ export const UnitTest = (): void => {
       expect(await this.dEXManager.s_swapRouter()).to.be.equal(
         this.mocks.mockISwapRouter.address
       );
+      expect(await this.dEXManager.s_tokenIn()).to.be.equal(
+        this.mocks.mockUsdc.address
+      );
+      expect(await this.dEXManager.s_tokenOut()).to.be.equal(
+        this.mocks.mockWeth.address
+      );
     });
   });
-  describe("setTokenIn", function () {
-    it("Should set tokenIn address", async function () {
-      await expect(this.dEXManager.setTokenIn(this.mocks.mockUsdc.address)).to
-        .be.not.reverted;
+
+  describe("swap", function () {
+    it("Should swap", async function () {
+      await expect(this.dEXManager.swap(this.signers[3].address, 100)).to.be.not
+        .reverted;
     });
     describe("Events", function () {
-      it("Should emit when tokenIn is set", async function () {
-        await expect(this.dEXManager.setTokenIn(this.mocks.mockUsdc.address))
-          .to.emit(this.dEXManager, `LogSetTokenIn`)
-          .withArgs(this.mocks.mockUsdc.address);
+      it("Should emit on swap", async function () {
+        const _amountIn = 100;
+        const _amountOut = 10;
+        await this.mocks.mockISwapRouter.mock.exactInputSingle.returns(
+          _amountOut
+        );
+        await expect(this.dEXManager.swap(this.signers[3].address, _amountIn))
+          .to.emit(this.dEXManager, `LogSwap`)
+          .withArgs(_amountIn, _amountOut);
       });
     });
   });

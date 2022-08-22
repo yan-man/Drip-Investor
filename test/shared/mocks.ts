@@ -10,7 +10,9 @@ import TradeManager_ABI from "../../artifacts/contracts/TradeManager.sol/TradeMa
 import DCAManager_ABI from "../../artifacts/contracts/DCAManager.sol/DCAManager.json";
 import ILendingPoolAddressesProvider_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPoolAddressesProvider.sol/ILendingPoolAddressesProvider.json";
 import ILendingPool_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPool.sol/ILendingPool.json";
-import ISwapRouter_ABI from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
+import ISwapRouter_ABI from "../../artifacts/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
+import TransferHelper_ABI from "../../artifacts/@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol/TransferHelper.json";
+
 export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   //   const erc20Artifact: Artifact = await artifacts.readArtifact("ERC20");
   const erc20: MockContract = await waffle.deployMockContract(
@@ -25,6 +27,22 @@ export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   await erc20.mock.balanceOf.returns(0);
 
   return erc20;
+}
+
+export async function deployMockWeth(deployer: Signer): Promise<MockContract> {
+  //   const erc20Artifact: Artifact = await artifacts.readArtifact("ERC20");
+  const weth: MockContract = await waffle.deployMockContract(
+    deployer,
+    ERC_20_ABI
+  );
+
+  await weth.mock.decimals.returns(18);
+  await weth.mock.name.returns(`Wrapped Ether`);
+  await weth.mock.symbol.returns(`WETH`);
+  await weth.mock.transferFrom.returns(true);
+  await weth.mock.balanceOf.returns(0);
+
+  return weth;
 }
 
 export const deployMockJobManager = async (
@@ -127,5 +145,16 @@ export const deployMockISwapRouter = async (
     deployer,
     ISwapRouter_ABI.abi
   );
+  await iSwapRouter.mock.exactInputSingle.returns(0);
   return iSwapRouter;
+};
+
+export const deployMockTransferHelper = async (
+  deployer: Signer
+): Promise<MockContract> => {
+  const transferHelper: MockContract = await waffle.deployMockContract(
+    deployer,
+    TransferHelper_ABI.abi
+  );
+  return transferHelper;
 };

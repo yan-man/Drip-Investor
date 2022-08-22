@@ -19,6 +19,8 @@ import {
   deployMockILendingPoolAddressesProvider,
   deployMockILendingPool,
   deployMockISwapRouter,
+  deployMockWeth,
+  deployMockTransferHelper,
 } from "./mocks";
 
 type UnitDCAManagerFixtureType = {
@@ -185,19 +187,27 @@ export const unitDEXManagerFixture: Fixture<UnitDEXManagerFixtureType> = async (
   const deployer: Wallet = signers[0];
   const mockUsdc = await deployMockUsdc(deployer);
   const mockISwapRouter = await deployMockISwapRouter(deployer);
-
-  await mockISwapRouter.mock.exactInputSingle.returns(0);
-
+  const mockWeth = await deployMockWeth(deployer);
+  const mockTransferHelper = await deployMockTransferHelper(deployer);
+  // const WETH9 = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
   const DEXManagerFactory: ContractFactory = await ethers.getContractFactory(
     `DEXManager`
+    // { libraries: { TransferHelper: mockTransferHelper.address } }
   );
   const dEXManager: DEXManager = (await DEXManagerFactory.connect(
     deployer
-  ).deploy(mockISwapRouter.address)) as DEXManager;
+  ).deploy(
+    mockISwapRouter.address,
+    mockUsdc.address,
+    mockWeth.address
+  )) as DEXManager;
   await dEXManager.deployed();
+  await mockISwapRouter.mock.exactInputSingle.returns(0);
   return {
     dEXManager,
     mockISwapRouter,
     mockUsdc,
+    mockWeth,
+    mockTransferHelper,
   };
 };
