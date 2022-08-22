@@ -66,8 +66,8 @@ contract LendingManager {
         isInitialized
         returns (bool _result)
     {
-        uint256 _amount = depositAmount_ * 1e18;
-        uint16 _referral = 0;
+        // uint256 _amount = depositAmount_ * 1e18;
+        // uint16 _referral = 0;
 
         // // // Approve LendingPool contract to move your DAI
         // IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
@@ -75,9 +75,9 @@ contract LendingManager {
         // // Deposit 1000 DAI
         s_lendingPool.deposit(
             s_depositTokenAddress,
-            _amount,
+            depositAmount_ * 1e18,
             onBehalfOf_,
-            _referral
+            0 // referral code
         );
 
         emit LogDeposit(onBehalfOf_, depositAmount_);
