@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-ethers";
 import "hardhat-contract-sizer";
 import "hardhat-watcher";
 import * as dotenv from "dotenv";
+import { ethers } from "hardhat";
 dotenv.config();
 
 const config: HardhatUserConfig = {
@@ -14,7 +15,13 @@ const config: HardhatUserConfig = {
   networks: {
     matic: {
       url: `${process.env.MUMBAI_URL}`,
-      accounts: [`${process.env.PRIVATE_KEY}`],
+      accounts: [
+        `${
+          process.env.PRIVATE_KEY
+            ? process.env.PRIVATE_KEY
+            : ethers.constants.AddressZero
+        }`,
+      ],
     },
   },
   gasReporter: {
