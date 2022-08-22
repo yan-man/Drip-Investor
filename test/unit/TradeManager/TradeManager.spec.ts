@@ -57,7 +57,7 @@ export const UnitTest = (): void => {
         });
       });
 
-      describe(`Execute DCA via swap`, async function () {
+      describe(`ExecuteJob - DCA via swap`, async function () {
         it("Should not allow swap for invalid Id", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(false);
           await expect(
@@ -68,6 +68,25 @@ export const UnitTest = (): void => {
           );
         });
         it("Should allow swap for valid jobId", async function () {
+          const _investmentAmount = 100;
+          const _user = this.signers[4].address;
+          const _jobId = 0;
+
+          await this.mocks.mockJobManager.mock.isValidId.returns(true);
+          await this.mocks.mockDCAManager.mock.s_userJobs
+            .withArgs(_user, _jobId)
+            .returns(_investmentAmount);
+          await this.mocks.mockJobManager.mock.s_jobs.returns(
+            ethers.BigNumber.from(_jobId), // jobId
+            _user, // owner address
+            ethers.BigNumber.from("0"), // frequencyOptionId
+            true, // isActive
+            ethers.BigNumber.from("1661074126"), // startTime
+            ethers.BigNumber.from(_investmentAmount) // investmentAmount
+          );
+          await expect(this.tradeManager.executeJob(0)).to.be.not.reverted;
+        });
+        it("Should revert if insufficient deposits", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(true);
           await expect(this.tradeManager.executeJob(0)).to.be.not.reverted;
         });

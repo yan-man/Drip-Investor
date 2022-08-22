@@ -40,6 +40,10 @@ contract TradeManager {
 
     error TradeManager__NotInitialized();
     error TradeManager__InvalidId(uint256 jobId);
+    error TradeManager__InsufficientFunds(
+        address investor,
+        uint256 investmentAmount
+    );
 
     // Modifiers
     modifier isInitialized() {
@@ -60,6 +64,19 @@ contract TradeManager {
             revert TradeManager__InvalidId(jobId_);
         }
         _;
+    }
+
+    function _hasFunds(
+        address investor_,
+        uint256 jobId_,
+        uint256 investmentAmount_
+    ) private view {
+        if (_s_DCAManager.s_userJobs(investor_, jobId_) < investmentAmount_) {
+            revert TradeManager__InsufficientFunds(
+                investor_,
+                investmentAmount_
+            );
+        }
     }
 
     // constructor
@@ -119,6 +136,9 @@ contract TradeManager {
         // a) get amt to withdraw
         (, address owner, , , , uint256 investmentAmount) = _s_JobManager
             .s_jobs(jobId_);
+
+        _hasFunds(owner, jobId_, investmentAmount);
+
         // b) call _s_LendingManager withdraw, to this contract
         _s_LendingManager.withdraw(address(this), investmentAmount);
 

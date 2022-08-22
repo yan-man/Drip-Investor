@@ -256,8 +256,9 @@ export const UnitTest = (): void => {
               .withArgs(this._mockJobId);
           });
         });
-
-        // it("", async function () {});
+      });
+      describe(`...after job is created`, async function () {
+        it("Should return hasDepositedFunds", async function () {});
       });
       describe("Events", function () {
         it("Should emit event when valid DCA job is created", async function () {
