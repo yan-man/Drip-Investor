@@ -20,7 +20,13 @@ export const UnitTest = (): void => {
       ).to.be.not.reverted;
     });
     describe("Events", function () {
-      it("Should emit when deposit token address set", async function () {});
+      it("Should emit when deposit token address set", async function () {
+        await expect(
+          this.lendingManager.setDepositToken(this.mocks.mockUsdc.address)
+        )
+          .to.emit(this.lendingManager, `LogSetDepositTokenAddress`)
+          .withArgs(this.mocks.mockUsdc.address);
+      });
     });
   });
   describe("Lending Manager", function () {

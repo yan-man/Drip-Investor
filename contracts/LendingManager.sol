@@ -20,6 +20,7 @@ contract LendingManager {
     // Events
     event LogDeposit(address onBehalfOf, uint256 depositAmount);
     event LogWithdrawal(address to, uint256 withdrawalAmount);
+    event LogSetDepositTokenAddress(address token);
 
     // Errors
     error LendingManager__NotInitialized();
@@ -55,6 +56,8 @@ contract LendingManager {
 
     function setDepositToken(address addr_) external {
         s_depositTokenAddress = addr_;
+
+        emit LogSetDepositTokenAddress(addr_);
     }
 
     // when DCA is actually executed, make sure to update deposit
