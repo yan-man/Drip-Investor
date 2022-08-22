@@ -31,16 +31,16 @@ async function main() {
   console.log("Mock USDC deployed to:", mockUsdc.address);
   console.log("Mock WEth deployed to:", mockWeth.address);
 
-  const lendingManager = await deployLendingManager(signers);
-  const dEXManager = await deployDEXManager(
+  const { lendingManager } = await deployLendingManager(signers);
+  const { dEXManager } = await deployDEXManager(
     signers,
     mockUsdc.address,
     mockWeth.address
   );
-  const tradeManager = await deployTradeManager(signers);
-  const jobManager = await deployJobManager(signers);
-  const dCAManager = await deployDCAManager(signers, mockUsdc.address);
-  const keepersManager = await deployKeepersManager(signers);
+  const { tradeManager } = await deployTradeManager(signers);
+  const { jobManager } = await deployJobManager(signers);
+  const { dCAManager } = await deployDCAManager(signers, mockUsdc.address);
+  const { keepersManager } = await deployKeepersManager(signers);
 }
 
 async function deployKeepersManager(signers: SignerWithAddress[]) {
@@ -50,7 +50,7 @@ async function deployKeepersManager(signers: SignerWithAddress[]) {
   await keepersManager.deployed();
 
   console.log("KeepersManager deployed to:", keepersManager.address);
-  return keepersManager;
+  return { keepersManager };
 }
 async function deployDCAManager(signers: SignerWithAddress[], USDC: String) {
   const DCAManager = await ethers.getContractFactory("DCAManager");
@@ -59,7 +59,7 @@ async function deployDCAManager(signers: SignerWithAddress[], USDC: String) {
   await dCAManager.deployed();
 
   console.log("DCAManager deployed to:", dCAManager.address);
-  return dCAManager;
+  return { dCAManager };
 }
 async function deployJobManager(signers: SignerWithAddress[]) {
   const DCAOptions = await ethers.getContractFactory("DCAOptions");
@@ -76,7 +76,7 @@ async function deployJobManager(signers: SignerWithAddress[]) {
 
   console.log("JobManager deployed to:", jobManager.address);
   console.log("DCAOptions lib deployed to:", dCAOptions.address);
-  return jobManager;
+  return { jobManager, dCAOptions };
 }
 async function deployTradeManager(signers: SignerWithAddress[]) {
   const TradeManager = await ethers.getContractFactory("TradeManager");
@@ -85,7 +85,7 @@ async function deployTradeManager(signers: SignerWithAddress[]) {
   await tradeManager.deployed();
 
   console.log("TradeManager deployed to:", tradeManager.address);
-  return tradeManager;
+  return { tradeManager };
 }
 
 async function deployDEXManager(
@@ -110,7 +110,7 @@ async function deployDEXManager(
 
   console.log("SwapRouter deployed to:", mockISwapRouter.address);
 
-  return dEXManager;
+  return { dEXManager };
 }
 
 async function deployLendingManager(signers: SignerWithAddress[]) {
@@ -129,7 +129,7 @@ async function deployLendingManager(signers: SignerWithAddress[]) {
   await lendingManager.deployed();
 
   console.log("LendingManager deployed to:", lendingManager.address);
-  return lendingManager;
+  return { lendingManager };
 }
 
 // We recommend this pattern to be able to use async/await everywhere
