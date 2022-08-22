@@ -83,12 +83,16 @@ describe(`Unit tests`, async () => {
 
   describe(`LendingManager`, async () => {
     beforeEach(async function () {
-      const { lendingManager, mockILendingPoolAddressesProvider } =
-        await this.loadFixture(unitLendingManagerFixture);
+      const {
+        lendingManager,
+        mockILendingPoolAddressesProvider,
+        mockILendingPool,
+      } = await this.loadFixture(unitLendingManagerFixture);
       this.lendingManager = lendingManager;
       this.mocks = {} as Mocks;
       this.mocks.mockILendingPoolAddressesProvider =
         mockILendingPoolAddressesProvider;
+      this.mocks.mockILendingPool = mockILendingPool;
     });
     LendingManagerUnitTest();
   });
