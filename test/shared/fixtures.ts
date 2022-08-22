@@ -146,6 +146,7 @@ export const unitLendingManagerFixture: Fixture<
   UnitLendingManagerFixtureType
 > = async (signers: Wallet[]) => {
   const deployer: Wallet = signers[0];
+  const mockUsdc = await deployMockUsdc(deployer);
   const mockILendingPoolAddressesProvider =
     await deployMockILendingPoolAddressesProvider(deployer);
   const mockILendingPool = await deployMockILendingPool(deployer);
@@ -165,5 +166,6 @@ export const unitLendingManagerFixture: Fixture<
     lendingManager,
     mockILendingPoolAddressesProvider,
     mockILendingPool,
+    mockUsdc,
   };
 };

@@ -87,12 +87,14 @@ describe(`Unit tests`, async () => {
         lendingManager,
         mockILendingPoolAddressesProvider,
         mockILendingPool,
+        mockUsdc,
       } = await this.loadFixture(unitLendingManagerFixture);
       this.lendingManager = lendingManager;
       this.mocks = {} as Mocks;
       this.mocks.mockILendingPoolAddressesProvider =
         mockILendingPoolAddressesProvider;
       this.mocks.mockILendingPool = mockILendingPool;
+      this.mocks.mockUsdc = mockUsdc;
     });
     LendingManagerUnitTest();
   });

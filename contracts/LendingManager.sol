@@ -57,10 +57,6 @@ contract LendingManager {
         s_depositTokenAddress = addr_;
     }
 
-    function getDepositTokenAddress() external isInitialized returns (address) {
-        return s_depositTokenAddress;
-    }
-
     // when DCA is actually executed, make sure to update deposit
     function deposit(address onBehalfOf_, uint256 depositAmount_)
         public

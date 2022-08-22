@@ -13,8 +13,18 @@ export const UnitTest = (): void => {
       );
     });
   });
+  describe("setDepositToken", function () {
+    it("Should set the Deposit token address", async function () {
+      await expect(
+        this.lendingManager.setDepositToken(this.mocks.mockUsdc.address)
+      ).to.be.not.reverted;
+    });
+    describe("Events", function () {
+      it("Should emit when deposit token address set", async function () {});
+    });
+  });
   describe("Lending Manager", function () {
-    // it("Should allow setting the LendingPool address", async function () {});
+    // it("Should allow setting the Deposit token address", async function () {});
     // it("Should set the lending pool and  provider on construction", async function () {});
     // it("Should not allow deposit if not initialized", async function () {});
     // it("Should allow setting the token address (ie usdc)", async function () {});
