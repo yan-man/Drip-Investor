@@ -4,13 +4,14 @@ import {
   unitJobManagerFixture,
   unitTradeManagerFixture,
   unitKeepersManagerFixture,
+  unitLendingManagerFixture,
 } from "../shared/fixtures";
 import { Mocks, Signers } from "../shared/types";
 import { UnitTest as DCAManagerUnitTest } from "./DCAManager/DCAManager.spec";
 import { UnitTest as JobManagerUnitTest } from "./JobManager/JobManager.spec";
 import { UnitTest as KeepersManagerUnitTest } from "./KeepersManager/KeepersManager.spec";
 import { UnitTest as TradeManagerUnitTest } from "./TradeManager/TradeManager.spec";
-
+import { UnitTest as LendingManagerUnitTest } from "./LendingManager/LendingManager.spec";
 describe(`Unit tests`, async () => {
   before(async function () {
     const wallets = waffle.provider.getWallets();
@@ -78,5 +79,17 @@ describe(`Unit tests`, async () => {
       this.mocks.mockTradeManager = mockTradeManager;
     });
     KeepersManagerUnitTest();
+  });
+
+  describe(`LendingManager`, async () => {
+    beforeEach(async function () {
+      const { lendingManager, mockILendingPoolAddressesProvider } =
+        await this.loadFixture(unitLendingManagerFixture);
+      this.lendingManager = lendingManager;
+      this.mocks = {} as Mocks;
+      this.mocks.mockILendingPoolAddressesProvider =
+        mockILendingPoolAddressesProvider;
+    });
+    LendingManagerUnitTest();
   });
 });
