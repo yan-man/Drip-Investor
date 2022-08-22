@@ -1,5 +1,5 @@
 import { run, ethers, network, artifacts } from "hardhat";
-import { Wallet } from "ethers";
+import { Wallet, ContractFactory } from "ethers";
 import {
   deployMockLendingManager,
   deployMockILendingPool,
@@ -9,6 +9,14 @@ import {
   deployMockUsdc,
 } from "../test/shared/mocks";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import {
+  DCAManager,
+  JobManager,
+  TradeManager,
+  KeepersManager,
+  LendingManager,
+  DEXManager,
+} from "../typechain-types/contracts/";
 
 async function main() {
   await run("compile");
@@ -41,11 +49,58 @@ async function main() {
   const { jobManager } = await deployJobManager(signers);
   const { dCAManager } = await deployDCAManager(signers, mockUsdc.address);
   const { keepersManager } = await deployKeepersManager(signers);
+
+  saveFrontendFiles(
+    tradeManager,
+    jobManager,
+    dCAManager,
+    keepersManager,
+    dEXManager,
+    lendingManager
+  );
+}
+
+async function saveFrontendFiles(
+  tradeManager: TradeManager,
+  jobManager: JobManager,
+  dCAManager: DCAManager,
+  keepersManager: KeepersManager,
+  dEXManager: DEXManager,
+  lendingManager: LendingManager
+) {
+  const fs = require("fs");
+  // const contractsDir = __dirname + "/../frontend/src/contracts";
+
+  // if (!fs.existsSync(contractsDir)) {
+  //   fs.mkdirSync(contractsDir, { recursive: true });
+  // }
+
+  // fs.writeFileSync(
+  //   contractsDir + "/contract-address.json",
+  //   JSON.stringify(
+  //     {
+  //       Appraiser: appraiser.address,
+  //       Reviewer: reviewer.address,
+  //       VRFv2Consumer: VRFv2Consumer.address,
+  //     },
+  //     undefined,
+  //     2
+  //   )
+  // );
+
+  // const VRFv2ConsumerArtifact = artifacts.readArtifactSync("VRFv2Consumer");
+  // fs.writeFileSync(
+  //   contractsDir + "/VRFv2Consumer.json",
+  //   JSON.stringify(VRFv2ConsumerArtifact, null, 2)
+  // );
 }
 
 async function deployKeepersManager(signers: SignerWithAddress[]) {
-  const KeepersManager = await ethers.getContractFactory("KeepersManager");
-  const keepersManager = await KeepersManager.deploy();
+  const KeepersManager: ContractFactory = await ethers.getContractFactory(
+    "KeepersManager"
+  );
+  const keepersManager: KeepersManager =
+    (await KeepersManager.deploy()) as KeepersManager;
 
   await keepersManager.deployed();
 
@@ -53,8 +108,10 @@ async function deployKeepersManager(signers: SignerWithAddress[]) {
   return { keepersManager };
 }
 async function deployDCAManager(signers: SignerWithAddress[], USDC: String) {
-  const DCAManager = await ethers.getContractFactory("DCAManager");
-  const dCAManager = await DCAManager.deploy(USDC);
+  const DCAManager: ContractFactory = await ethers.getContractFactory(
+    "DCAManager"
+  );
+  const dCAManager: DCAManager = (await DCAManager.deploy(USDC)) as DCAManager;
 
   await dCAManager.deployed();
 
@@ -62,15 +119,20 @@ async function deployDCAManager(signers: SignerWithAddress[], USDC: String) {
   return { dCAManager };
 }
 async function deployJobManager(signers: SignerWithAddress[]) {
-  const DCAOptions = await ethers.getContractFactory("DCAOptions");
+  const DCAOptions: ContractFactory = await ethers.getContractFactory(
+    "DCAOptions"
+  );
   const dCAOptions = await DCAOptions.deploy();
 
-  const JobManager = await ethers.getContractFactory("JobManager", {
-    libraries: {
-      DCAOptions: dCAOptions.address,
-    },
-  });
-  const jobManager = await JobManager.deploy();
+  const JobManager: ContractFactory = await ethers.getContractFactory(
+    "JobManager",
+    {
+      libraries: {
+        DCAOptions: dCAOptions.address,
+      },
+    }
+  );
+  const jobManager: JobManager = (await JobManager.deploy()) as JobManager;
 
   await jobManager.deployed();
 
@@ -79,8 +141,11 @@ async function deployJobManager(signers: SignerWithAddress[]) {
   return { jobManager, dCAOptions };
 }
 async function deployTradeManager(signers: SignerWithAddress[]) {
-  const TradeManager = await ethers.getContractFactory("TradeManager");
-  const tradeManager = await TradeManager.deploy();
+  const TradeManager: ContractFactory = await ethers.getContractFactory(
+    "TradeManager"
+  );
+  const tradeManager: TradeManager =
+    (await TradeManager.deploy()) as TradeManager;
 
   await tradeManager.deployed();
 
@@ -99,12 +164,14 @@ async function deployDEXManager(
   //   mockILendingPool.address
   // );
 
-  const DEXManager = await ethers.getContractFactory("DEXManager");
-  const dEXManager = await DEXManager.deploy(
+  const DEXManager: ContractFactory = await ethers.getContractFactory(
+    "DEXManager"
+  );
+  const dEXManager: DEXManager = (await DEXManager.deploy(
     mockISwapRouter.address,
     mockUsdc,
     mockWeth
-  );
+  )) as DEXManager;
 
   await dEXManager.deployed();
 
@@ -121,10 +188,12 @@ async function deployLendingManager(signers: SignerWithAddress[]) {
     mockILendingPool.address
   );
 
-  const LendingManager = await ethers.getContractFactory("LendingManager");
-  const lendingManager = await LendingManager.deploy(
-    mockILendingPoolAddressesProvider.address
+  const LendingManager: ContractFactory = await ethers.getContractFactory(
+    "LendingManager"
   );
+  const lendingManager: LendingManager = (await LendingManager.deploy(
+    mockILendingPoolAddressesProvider.address
+  )) as LendingManager;
 
   await lendingManager.deployed();
 
