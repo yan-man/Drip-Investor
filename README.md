@@ -43,3 +43,5 @@ $ git clone https://github.com/yan-man/Drip-Investor.git
 $ cd Drip-Investor
 $ npm install
 ```
+
+npx hardhat run scripts/deploy.js --network matic

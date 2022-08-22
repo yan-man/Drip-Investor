@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ethers";
+import "hardhat-contract-sizer";
 import "hardhat-watcher";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -50,6 +51,16 @@ const config: HardhatUserConfig = {
     //   files: ["./test/**/*"],
     //   verbose: true,
     // },
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts",
+  },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: false,
   },
 };
 
