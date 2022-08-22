@@ -61,6 +61,16 @@ export const UnitTest = (): void => {
           .to.emit(this.lendingManager, `LogWithdrawal`)
           .withArgs(this.signers[4].address, 0);
       });
+      it("Should not revert on withdraw=2", async function () {
+        await this.mocks.mockILendingPool.mock.withdraw.returns(2);
+        await expect(this.lendingManager.withdraw(this.signers[4].address, 100))
+          .to.be.not.reverted;
+      });
+      it("Should not revert on withdraw=0", async function () {
+        await this.mocks.mockILendingPool.mock.withdraw.returns(0);
+        await expect(this.lendingManager.withdraw(this.signers[4].address, 100))
+          .to.be.not.reverted;
+      });
     });
   });
 };

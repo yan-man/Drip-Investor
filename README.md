@@ -13,14 +13,12 @@ Drip Investor is built via integrations with Aave, Uniswap, and Chainlink Keeper
 - [System Requirements](#system-requirements)
 - [Quick Start](#quick-start)
   - [Initial Setup and Dependencies](#initial-setup-and-dependencies)
-  - [Local Hardhat Node](#local-hardhat-node)
   - [Deploy Smart Contracts](#deploy-smart-contracts)
 - [User Guide](#user-guide)
   - [Read Reviews](#read-reviews)
 - [Smart Contract & Mechanics](#smart-contract--mechanics)
   - [Contract Deployment](#contract-deployment)
   - [Local Hardhat Node](#local-hardhat-node)
-- [Initial Configuration Settings](#initial-configuration-settings)
 - [Testing](#testing)
 - [Design Patterns](#design-patterns)
 - [Troubleshooting](#troubleshooting)
@@ -44,4 +42,46 @@ $ cd Drip-Investor
 $ npm install
 ```
 
-npx hardhat run scripts/deploy.js --network matic
+### Testing
+
+See [Hardhat](https://hardhat.org/tutorial/testing-contracts.html) for more details.
+
+Navigate to root directory, then start tests.
+
+```sh
+$ npx hardhat test
+```
+
+For test coverage:
+
+```sh
+$ npx hardhat coverage
+```
+
+### Deploy Smart Contracts
+
+On a new terminal (Terminal 3), go to the repository's root folder and run the script to deploy the collection of smart contracts and configure initial settings.
+
+```sh
+$ npx hardhat run scripts/deploy.js --network localhost
+```
+
+## User Guide
+
+## Design Patterns
+
+- import libraries to reduce contract byte size
+- revert errors over `require` to save gas
+
+## Further / Next Steps
+
+## What's Included?
+
+- [Hardhat](https://hardhat.org/): An Ethereum development task runner and testing network.
+- [Mocha](https://mochajs.org/): A JavaScript test runner.
+- [Chai](https://www.chaijs.com/): A JavaScript assertion library.
+- [Waffle](https://github.com/EthWorks/Waffle/): To have Ethereum-specific Chai assertions/matchers.
+
+## License
+
+All non-boilerplate code is unlicensed. Yan Man 2022.

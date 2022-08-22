@@ -135,6 +135,7 @@ export const deployMockILendingPool = async (
     deployer,
     ILendingPool_ABI.abi
   );
+  await iLendingPool.mock.withdraw.returns(0);
   return iLendingPool;
 };
 
