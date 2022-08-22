@@ -39,7 +39,7 @@ Drip Investor is built via integrations with Aave, Uniswap, and Chainlink Keeper
 On Terminal 1 clone this repository and install its dependencies:
 
 ```sh
-$ git clone https://github.com/yan-man/DCAer-hackathon.git
-$ cd DCAer-hackathon
+$ git clone https://github.com/yan-man/Drip-Investor.git
+$ cd Drip-Investor
 $ npm install
 ```

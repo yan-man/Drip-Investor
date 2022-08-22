@@ -8,13 +8,12 @@ dotenv.config();
 
 const config: HardhatUserConfig = {
   solidity: {
-    compilers: [{ version: "0.8.9" }, { version: "0.6.12" }],
+    compilers: [{ version: "0.8.9" }],
   },
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    matic: {
+      url: `${process.env.MUMBAI_URL}`,
+      accounts: [`${process.env.PRIVATE_KEY}`],
     },
   },
   gasReporter: {
@@ -22,7 +21,10 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      mainnet: `${process.env.ETHERSCAN_API_KEY}`,
+      polygonMumbai: `${process.env.POLYGONSCAN_API_KEY}`,
+    },
   },
   watcher: {
     // compilation: {
