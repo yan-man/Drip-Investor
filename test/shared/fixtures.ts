@@ -203,6 +203,7 @@ export const unitDEXManagerFixture: Fixture<UnitDEXManagerFixtureType> = async (
   )) as DEXManager;
   await dEXManager.deployed();
   await mockISwapRouter.mock.exactInputSingle.returns(0);
+  // await mockUsdc.mock.call.returns(true, ethers.utils.formatBytes32String(""));
   return {
     dEXManager,
     mockISwapRouter,

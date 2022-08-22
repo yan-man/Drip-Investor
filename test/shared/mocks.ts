@@ -11,7 +11,7 @@ import DCAManager_ABI from "../../artifacts/contracts/DCAManager.sol/DCAManager.
 import ILendingPoolAddressesProvider_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPoolAddressesProvider.sol/ILendingPoolAddressesProvider.json";
 import ILendingPool_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPool.sol/ILendingPool.json";
 import ISwapRouter_ABI from "../../artifacts/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
-import TransferHelper_ABI from "../../artifacts/@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol/TransferHelper.json";
+import TransferHelper_ABI from "../../artifacts/contracts/libraries/TransferHelper.sol/TransferHelper.json";
 
 export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   //   const erc20Artifact: Artifact = await artifacts.readArtifact("ERC20");

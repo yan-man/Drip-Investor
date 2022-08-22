@@ -5,7 +5,7 @@ pragma abicoder v2;
 // Import this file to use console.log
 import "hardhat/console.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+import "./libraries/TransferHelper.sol";
 
 // connect to uniswap, execute txs for swaps
 // caller: TradeManager
@@ -65,7 +65,7 @@ contract DEXManager {
         );
 
         // Approve the router to spend DAI.
-        // TransferHelper.safeApprove(_tokenIn, address(s_swapRouter), amountIn_);
+        TransferHelper.safeApprove(_tokenIn, address(s_swapRouter), amountIn_);
 
         // exact input swap
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
