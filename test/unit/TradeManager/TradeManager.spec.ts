@@ -76,18 +76,16 @@ export const UnitTest = (): void => {
         });
         it("Should allow swap for valid jobId", async function () {
           await this.mocks.mockJobManager.mock.isValidId.returns(true);
-          await this.mocks.mockJobManager.mock.s_jobs.returns(
-            ethers.BigNumber.from("0"),
-            this.signers[4].address,
-            ethers.BigNumber.from("0"),
-            true,
-            ethers.BigNumber.from("1661074126"),
-            ethers.BigNumber.from("100")
-          );
           await expect(this.tradeManager.executeJob(0)).to.be.not.reverted;
         });
         describe(`Events`, async function () {
-          it("Should emit on successful executedJob", async function () {});
+          it("Should emit on successful executedJob", async function () {
+            await this.mocks.mockJobManager.mock.isValidId.returns(true);
+            await expect(this.tradeManager.executeJob(0)).to.emit(
+              this.tradeManager,
+              `LogExecuteJob`
+            );
+          });
         });
       });
     });

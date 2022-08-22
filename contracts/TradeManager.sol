@@ -20,7 +20,6 @@ import "./JobManager.sol";
 // caller:
 // KeepersManager
 
-// holds all the tokens
 contract TradeManager {
     // Type declarations
     // State variables
@@ -36,6 +35,7 @@ contract TradeManager {
         address jobManagerAddr,
         address DCAManagerAddr
     );
+    event LogExecuteJob(uint256 jobId);
 
     error TradeManager__NotInitialized();
     error TradeManager__InvalidId(uint256 jobId);
@@ -139,5 +139,7 @@ contract TradeManager {
         // 3) update deposit/job amt in DCAManager
         // a) call DCAManager
         _s_DCAManager.reduceDeposit(jobId_, owner, _amountSwapped);
+
+        emit LogExecuteJob(jobId_);
     }
 }

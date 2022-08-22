@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./JobManager.sol";
 import "./TradeManager.sol";
 
+// should own the tokens, and delegate access to necessary parties
 contract DCAManager is Ownable {
     // Type declarations
     enum CoreContractId {
@@ -27,7 +28,7 @@ contract DCAManager is Ownable {
     // State variables
     mapping(CoreContractId => address) public s_contractsLookup;
     // mapping(address => uint256) public s_deposits; // user address -> num tokens deposited
-    mapping(address => mapping(uint256 => uint256)) public s_userJobs; // user address -> (job id -> num tokens deposited)
+    mapping(address => mapping(uint256 => uint256)) public s_userJobs; // user address -> (job id -> num tokens deposited); should probs be userFunds
     bool public s_isInitialized;
     address public s_tokenAddr; // should be USDC addr
     JobManager private _s_jm;
