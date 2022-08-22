@@ -17,8 +17,8 @@ contract DCAManager is Ownable {
         JOB_MANAGER, // 0
         KEEPERS_MANAGER, // 1
         TRADE_MANAGER, // 2
-        UNISWAP_MANAGER, // 3
-        AAVE_MANAGER // 4
+        DEX_MANAGER, // 3
+        LENDING_MANAGER // 4
     }
     // struct UserJobs {
     //     // uint256[] jobIds;
@@ -108,7 +108,7 @@ contract DCAManager is Ownable {
         private
         returns (bool _isInitialized)
     {
-        uint256 _numContracts = uint(CoreContractId.AAVE_MANAGER);
+        uint256 _numContracts = uint(CoreContractId.LENDING_MANAGER);
         uint256 _count = 0;
         for (uint256 i = 0; i < _numContracts; i++) {
             if (s_contractsLookup[CoreContractId(i)] != address(0)) {
