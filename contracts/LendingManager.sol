@@ -20,6 +20,7 @@ contract LendingManager {
     // Events
     event LogDeposit(address onBehalfOf, uint256 depositAmount);
     event LogWithdrawal(address to, uint256 withdrawalAmount);
+    event LogSetDepositTokenAddress(address token);
 
     // Errors
     error LendingManager__NotInitialized();
@@ -55,10 +56,8 @@ contract LendingManager {
 
     function setDepositToken(address addr_) external {
         s_depositTokenAddress = addr_;
-    }
 
-    function getDepositTokenAddress() external isInitialized returns (address) {
-        return s_depositTokenAddress;
+        emit LogSetDepositTokenAddress(addr_);
     }
 
     // when DCA is actually executed, make sure to update deposit
@@ -67,8 +66,8 @@ contract LendingManager {
         isInitialized
         returns (bool _result)
     {
-        uint256 _amount = depositAmount_ * 1e18;
-        uint16 _referral = 0;
+        // uint256 _amount = depositAmount_ * 1e18;
+        // uint16 _referral = 0;
 
         // // // Approve LendingPool contract to move your DAI
         // IERC20(s_depositTokenAddress).approve(address(s_lendingPool), _amount);
@@ -76,10 +75,11 @@ contract LendingManager {
         // // Deposit 1000 DAI
         s_lendingPool.deposit(
             s_depositTokenAddress,
-            _amount,
+            depositAmount_ * 1e18,
             onBehalfOf_,
-            _referral
+            0 // referral code
         );
+        _result = true;
 
         emit LogDeposit(onBehalfOf_, depositAmount_);
     }
@@ -92,13 +92,14 @@ contract LendingManager {
         uint256 _amount = withdrawalAmount_ * 1e18;
 
         // Deposit 1000 DAI
-        s_lendingPool.withdraw(
+        uint256 _withdrawnAmount = s_lendingPool.withdraw(
             s_depositTokenAddress,
             _amount,
             to_ // maybe send straight to DEXManager
         );
-
-        emit LogWithdrawal(to_, withdrawalAmount_);
-        _result = true;
+        if (_withdrawnAmount > 0) {
+            _result = true;
+        }
+        emit LogWithdrawal(to_, _withdrawnAmount);
     }
 }

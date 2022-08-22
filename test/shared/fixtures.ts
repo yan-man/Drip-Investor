@@ -6,6 +6,7 @@ import {
   JobManager,
   TradeManager,
   KeepersManager,
+  LendingManager,
 } from "../../typechain-types/contracts/";
 import {
   deployMockUsdc,
@@ -14,6 +15,8 @@ import {
   deployMockTradeManager,
   deployMockDEXManager,
   deployMockDCAManager,
+  deployMockILendingPoolAddressesProvider,
+  deployMockILendingPool,
 } from "./mocks";
 
 type UnitDCAManagerFixtureType = {
@@ -39,6 +42,12 @@ type UnitKeepersManagerFixtureType = {
   keepersManager: KeepersManager;
   mockJobManager: MockContract;
   mockTradeManager: MockContract;
+};
+
+type UnitLendingManagerFixtureType = {
+  lendingManager: LendingManager;
+  mockILendingPoolAddressesProvider: MockContract;
+  mockILendingPool: MockContract;
 };
 
 export const unitDCAManagerFixture: Fixture<UnitDCAManagerFixtureType> = async (
@@ -131,4 +140,34 @@ export const unitKeepersManagerFixture: Fixture<
   await keepersManager.deployed();
 
   return { keepersManager, mockJobManager, mockTradeManager };
+};
+
+export const unitLendingManagerFixture: Fixture<
+  UnitLendingManagerFixtureType
+> = async (signers: Wallet[]) => {
+  const deployer: Wallet = signers[0];
+  const mockUsdc = await deployMockUsdc(deployer);
+  const mockILendingPoolAddressesProvider =
+    await deployMockILendingPoolAddressesProvider(deployer);
+  const mockILendingPool = await deployMockILendingPool(deployer);
+  await mockILendingPoolAddressesProvider.mock.getLendingPool.returns(
+    mockILendingPool.address
+  );
+  await mockILendingPool.mock.deposit.returns();
+  await mockILendingPool.mock.withdraw.returns(0);
+  const LendingManagerFactory: ContractFactory =
+    await ethers.getContractFactory(`LendingManager`);
+  const lendingManager: LendingManager = (await LendingManagerFactory.connect(
+    deployer
+  ).deploy(mockILendingPoolAddressesProvider.address)) as LendingManager;
+  await lendingManager.deployed();
+
+  // await iLendingPoolAddressesProvider.mock.getLendingPool.returns(true);
+
+  return {
+    lendingManager,
+    mockILendingPoolAddressesProvider,
+    mockILendingPool,
+    mockUsdc,
+  };
 };

@@ -8,6 +8,8 @@ import DEXManager_ABI from "../../artifacts/contracts/DEXManager.sol/DEXManager.
 import LendingManager_ABI from "../../artifacts/contracts/LendingManager.sol/LendingManager.json";
 import TradeManager_ABI from "../../artifacts/contracts/TradeManager.sol/TradeManager.json";
 import DCAManager_ABI from "../../artifacts/contracts/DCAManager.sol/DCAManager.json";
+import ILendingPoolAddressesProvider_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPoolAddressesProvider.sol/ILendingPoolAddressesProvider.json";
+import ILendingPool_ABI from "../../artifacts/contracts/interfaces/Aave/ILendingPool.sol/ILendingPool.json";
 
 export async function deployMockUsdc(deployer: Signer): Promise<MockContract> {
   //   const erc20Artifact: Artifact = await artifacts.readArtifact("ERC20");
@@ -94,4 +96,26 @@ export const deployMockDCAManager = async (
 
   await dCAManager.mock.reduceDeposit.returns(true);
   return dCAManager;
+};
+
+export const deployMockILendingPoolAddressesProvider = async (
+  deployer: Signer
+): Promise<MockContract> => {
+  const iLendingPoolAddressesProvider: MockContract =
+    await waffle.deployMockContract(
+      deployer,
+      ILendingPoolAddressesProvider_ABI.abi
+    );
+
+  return iLendingPoolAddressesProvider;
+};
+
+export const deployMockILendingPool = async (
+  deployer: Signer
+): Promise<MockContract> => {
+  const iLendingPool: MockContract = await waffle.deployMockContract(
+    deployer,
+    ILendingPool_ABI.abi
+  );
+  return iLendingPool;
 };
